@@ -10,15 +10,15 @@ from unittest.mock import Mock
 import pytest
 from bluesky.run_engine import RunEngine
 from ophyd_async.core import (
-    DeviceCollector,
     FilenameProvider,
     StaticFilenameProvider,
     StaticPathProvider,
+    init_devices,
 )
 from ophyd_async.testing import callback_on_mock_put, set_mock_value
 from super_state_machine.errors import TransitionError
 
-from p99_bluesky.devices import Andor2Ad, Andor3Ad
+from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.devices.stages import ThreeAxisStage
 from soft_motor import SoftThreeAxisStage
 
@@ -130,7 +130,7 @@ async def fake_99():
 
 @pytest.fixture(scope="session")
 def xyz_motor(fake_99):
-    with DeviceCollector(mock=False):
+    with init_devices(mock=False):
         xyz_motor = SoftThreeAxisStage("p99-MO-STAGE-02:", name="xyz_motor")
     yield xyz_motor
 
@@ -158,68 +158,38 @@ def static_path_provider(
 
 # area detector that is use for testing
 @pytest.fixture
-async def andor2(static_path_provider: StaticPathProvider) -> Andor2Ad:
-    async with DeviceCollector(mock=True):
-        andor2 = Andor2Ad("p99", static_path_provider, "andor2")
+async def andor2(static_path_provider: StaticPathProvider) -> Andor2Detector:
+    async with init_devices(mock=True):
+        andor2 = Andor2Detector("p99", static_path_provider)
 
-    set_mock_value(andor2._controller._drv.array_size_x, 10)
-    set_mock_value(andor2._controller._drv.array_size_y, 20)
-    set_mock_value(andor2.hdf.file_path_exists, True)
-    set_mock_value(andor2.hdf.num_captured, 0)
-    set_mock_value(andor2.hdf.file_path, str(static_path_provider._directory_path))
+    set_mock_value(andor2.driver.array_size_x, 10)
+    set_mock_value(andor2.driver.array_size_y, 20)
+    set_mock_value(andor2.fileio.file_path_exists, True)
+    set_mock_value(andor2.fileio.num_captured, 0)
+    set_mock_value(andor2.fileio.file_path, str(static_path_provider._directory_path))
     set_mock_value(
-        andor2.hdf.full_file_name,
+        andor2.fileio.full_file_name,
         str(static_path_provider._directory_path) + "/test-andor2-hdf0",
     )
 
     rbv_mocks = Mock()
     rbv_mocks.get.side_effect = range(0, 10000)
     callback_on_mock_put(
-        andor2._writer.hdf.capture,
-        lambda *_, **__: set_mock_value(andor2._writer.hdf.capture, value=True),
+        andor2.fileio.capture,
+        lambda *_, **__: set_mock_value(andor2.fileio.capture, value=True),
     )
 
     callback_on_mock_put(
-        andor2.drv.acquire,
-        lambda *_, **__: set_mock_value(andor2._writer.hdf.num_captured, rbv_mocks.get()),
+        andor2.driver.acquire,
+        lambda *_, **__: set_mock_value(andor2.fileio.num_captured, rbv_mocks.get()),
     )
 
     return andor2
 
 
 @pytest.fixture
-async def andor3(static_path_provider: StaticPathProvider) -> Andor3Ad:
-    async with DeviceCollector(mock=True):
-        andor3 = Andor3Ad("p99", static_path_provider, "andor3")
-
-    set_mock_value(andor3._controller._drv.array_size_x, 10)
-    set_mock_value(andor3._controller._drv.array_size_y, 20)
-    set_mock_value(andor3.hdf.file_path_exists, True)
-    set_mock_value(andor3.hdf.num_captured, 0)
-    set_mock_value(andor3.hdf.file_path, str(static_path_provider._directory_path))
-    set_mock_value(
-        andor3.hdf.full_file_name,
-        str(static_path_provider._directory_path) + "/test-andor3-hdf0",
-    )
-
-    rbv_mocks = Mock()
-    rbv_mocks.get.side_effect = range(0, 10000)
-    callback_on_mock_put(
-        andor3._writer.hdf.capture,
-        lambda *_, **__: set_mock_value(andor3._writer.hdf.capture, value=True),
-    )
-
-    callback_on_mock_put(
-        andor3.drv.acquire,
-        lambda *_, **__: set_mock_value(andor3._writer.hdf.num_captured, rbv_mocks.get()),
-    )
-
-    return andor3
-
-
-@pytest.fixture
 async def sim_motor():
-    async with DeviceCollector(mock=True):
+    async with init_devices(mock=True):
         sim_motor = ThreeAxisStage("BLxxI-MO-TABLE-01:X", name="sim_motor")
     set_mock_value(sim_motor.x.velocity, 2.78)
     set_mock_value(sim_motor.x.high_limit_travel, 8.168)
@@ -248,3 +218,8 @@ async def sim_motor():
     set_mock_value(sim_motor.z.max_velocity, 10)
 
     yield sim_motor
+
+
+@pytest.fixture
+def test_adandor(ad_standard_det_factory) -> Andor2Detector:
+    return ad_standard_det_factory(Andor2Detector)

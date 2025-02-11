@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from bluesky.plans import scan
 from bluesky.run_engine import RunEngine
-from ophyd_async.core import DeviceCollector
+from ophyd_async.core import init_devices
 from ophyd_async.testing import assert_emitted
 
 from p99_bluesky.devices.p99.sample_stage import (
@@ -24,7 +24,7 @@ async def test_fake_p99(RE: RunEngine, xyz_motor) -> None:
         docs[name].append(doc)
 
     await asyncio.sleep(A_BIT)
-    with DeviceCollector(mock=False):
+    with init_devices(mock=False):
         mock_sampleAngleStage = SampleAngleStage(
             "p99-MO-TABLE-01:", name="mock_sampleAngleStage"
         )

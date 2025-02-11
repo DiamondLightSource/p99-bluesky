@@ -13,7 +13,7 @@ from ophyd_async.core._utils import (
     WatcherUpdate,
 )
 from ophyd_async.epics.motor import FlyMotorInfo, MotorLimitsException
-from ophyd_async.sim.demo._sim_motor import SimMotor
+from ophyd_async.sim._sim_motor import SimMotor
 
 
 class p99SimMotor(SimMotor, Flyable, Preparable):
@@ -56,9 +56,9 @@ class p99SimMotor(SimMotor, Flyable, Preparable):
     @AsyncStatus.wrap
     async def kickoff(self):
         """Begin moving motor from prepared position to final position."""
-        assert (
-            self._fly_completed_position
-        ), "Motor must be prepared before attempting to kickoff"
+        assert self._fly_completed_position, (
+            "Motor must be prepared before attempting to kickoff"
+        )
 
         self._fly_status = self.set(self._fly_completed_position)
 

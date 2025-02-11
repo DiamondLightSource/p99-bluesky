@@ -9,9 +9,9 @@ from dodal.common.visit import StaticVisitPathProvider
 from dodal.log import set_beamline as set_log_beamline
 from dodal.utils import get_beamline_name
 from ophyd_async.core import AutoIncrementFilenameProvider, StaticPathProvider
+from ophyd_async.epics.adandor import Andor2Detector
 from ophyd_async.epics.adcore import SingleTriggerDetector
 
-from p99_bluesky.devices import Andor2Ad
 from p99_bluesky.devices.p99.sample_stage import FilterMotor, SampleAngleStage
 from p99_bluesky.devices.stages import ThreeAxisStage
 
@@ -89,9 +89,9 @@ datapath = StaticPathProvider(
 
 def andor2_det(
     wait_for_connection: bool = True, fake_with_ophyd_mock: bool = False
-) -> Andor2Ad:
+) -> Andor2Detector:
     return device_instantiation(
-        Andor2Ad,
+        Andor2Detector,
         prefix="-EA-DET-03:",
         name="andor2_det",
         path_provider=datapath,
@@ -105,8 +105,8 @@ def andor2_point(
 ) -> SingleTriggerDetector:
     return device_instantiation(
         SingleTriggerDetector,
-        drv=andor2_det().drv,
-        read_uncached=([andor2_det().drv.stat_mean]),
+        drv=andor2_det().driver,
+        read_uncached=([andor2_det().driver.stat_mean]),
         prefix="",
         name="andor2_point",
         wait=wait_for_connection,

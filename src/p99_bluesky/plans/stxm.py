@@ -4,10 +4,9 @@ from blueapi.core import MsgGenerator
 from bluesky.preprocessors import (
     finalize_wrapper,
 )
-from ophyd_async.epics.adcore import SingleTriggerDetector
 from ophyd_async.epics.motor import Motor
 
-from p99_bluesky.devices.andorAd import Andor2Ad, Andor3Ad
+from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.log import LOGGER
 from p99_bluesky.plan_stubs.motor_plan import (
     check_within_limit,
@@ -20,7 +19,7 @@ from p99_bluesky.utility.utility import step_size_to_step_num
 
 
 def stxm_step(
-    det: Andor2Ad | Andor3Ad | SingleTriggerDetector,
+    det: Andor2Detector,
     count_time: float,
     x_step_motor: Motor | p99SimMotor,
     x_step_start: float,
@@ -40,7 +39,7 @@ def stxm_step(
 
     Parameters
     ----------
-    det: Andor2Ad | Andor3Ad,
+    det: Andor2Detector | Andor3Ad,
         Area detector.
     count_time: float
         detector count time.
@@ -92,7 +91,7 @@ def stxm_step(
             x_step_motor, y_step_motor
         )
     # Set count time on detector
-    yield from bps.abs_set(det.drv.acquire_time, count_time)
+    yield from bps.abs_set(det.driver.acquire_time, count_time)
     # add 1 to step number to include the end point
     yield from finalize_wrapper(
         plan=bp.grid_scan(
@@ -113,7 +112,7 @@ def stxm_step(
 
 
 def stxm_fast(
-    det: Andor2Ad | Andor3Ad | SingleTriggerDetector,
+    det: Andor2Detector,
     count_time: float,
     step_motor: Motor,
     step_start: float,
@@ -138,7 +137,7 @@ def stxm_fast(
 
     Parameters
     ----------
-    det: Andor2Ad | Andor3Ad,
+    det: Andor2Detector | Andor3Ad,
         Area detector.
     count_time: float
         detector count time.
@@ -218,7 +217,7 @@ def stxm_fast(
         + f", number of step = {num_of_step}."
     )
     # Set count time on detector
-    yield from bps.abs_set(det.drv.acquire_time, count_time)
+    yield from bps.abs_set(det.driver.acquire_time, count_time)
     yield from finalize_wrapper(
         plan=fast_scan_grid(
             [det],
