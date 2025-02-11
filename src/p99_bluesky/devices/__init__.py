@@ -1,4 +1,5 @@
-from .andorAd import Andor2Ad, Andor3Ad
+from ophyd_async.epics.adandor import Andor2Detector
+
 from .stages import ThreeAxisStage
 
-__all__ = ["Andor2Ad", "Andor3Ad", "ThreeAxisStage"]
+__all__ = ["Andor2Detector", "ThreeAxisStage"]

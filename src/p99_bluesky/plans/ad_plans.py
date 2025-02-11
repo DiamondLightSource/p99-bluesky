@@ -4,11 +4,11 @@ from bluesky import preprocessors as bpp
 from bluesky.utils import Msg, short_uid
 from ophyd_async.core import DetectorTrigger, TriggerInfo
 
-from p99_bluesky.devices.andorAd import Andor2Ad, Andor3Ad
+from p99_bluesky.devices import Andor2Detector
 
 
 def takeImg(
-    det: Andor2Ad | Andor3Ad,
+    det: Andor2Detector,
     exposure: float,
     n_img: int = 1,
     det_trig: DetectorTrigger = DetectorTrigger.INTERNAL,
@@ -18,7 +18,7 @@ def takeImg(
     e.g. Able to change tigger_info unlike tigger
     """
     grp = short_uid("prepare")
-    deadtime: float = det.controller.get_deadtime(exposure)
+    deadtime: float = det._controller.get_deadtime(exposure)
     tigger_info = TriggerInfo(
         number_of_triggers=n_img,
         trigger=det_trig,
@@ -36,8 +36,8 @@ def takeImg(
     yield from innerTakeImg()
 
 
-def tiggerImg(dets: Andor2Ad | Andor3Ad, value: int) -> MsgGenerator:
-    yield Msg("set", dets.drv.acquire_time, value)
+def tiggerImg(dets: Andor2Detector, value: int) -> MsgGenerator:
+    yield Msg("set", dets.driver.acquire_time, value)
 
     @bpp.stage_decorator([dets])
     @bpp.run_decorator()

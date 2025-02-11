@@ -4,11 +4,11 @@ from collections import defaultdict
 import pytest
 from bluesky.run_engine import RunEngine
 from ophyd_async.core import (
-    DeviceCollector,
+    init_devices,
 )
+from ophyd_async.epics.adandor import Andor2Detector
 from ophyd_async.testing import assert_emitted, set_mock_value
 
-from p99_bluesky.devices.andorAd import Andor2Ad, Andor3Ad
 from p99_bluesky.devices.stages import ThreeAxisStage
 from p99_bluesky.plans.stxm import stxm_fast, stxm_step
 from p99_bluesky.sim.sim_stages import SimThreeAxisStage
@@ -17,7 +17,7 @@ from p99_bluesky.utility.utility import step_size_to_step_num
 
 @pytest.fixture
 async def sim_motor_step():
-    async with DeviceCollector():
+    async with init_devices():
         sim_motor_step = SimThreeAxisStage(name="sim_motor", instant=True)
 
     yield sim_motor_step
@@ -25,14 +25,14 @@ async def sim_motor_step():
 
 @pytest.fixture
 async def sim_motor_fly():
-    async with DeviceCollector():
+    async with init_devices():
         sim_motor_fly = SimThreeAxisStage(name="sim_motor_fly", instant=False)
 
     yield sim_motor_fly
 
 
 async def test_stxm_fast_zero_velocity_fail(
-    andor2: Andor2Ad, sim_motor: ThreeAxisStage, RE: RunEngine
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
 ):
     plan_time = 30
     count_time = 0.2
@@ -64,7 +64,9 @@ async def test_stxm_fast_zero_velocity_fail(
     assert_emitted(docs)
 
 
-async def test_stxm_fast(andor2: Andor2Ad, sim_motor: ThreeAxisStage, RE: RunEngine):
+async def test_stxm_fast(
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
+):
     docs = defaultdict(list)
 
     def capture_emitted(name, doc):
@@ -104,7 +106,7 @@ async def test_stxm_fast(andor2: Andor2Ad, sim_motor: ThreeAxisStage, RE: RunEng
 
 
 async def test_stxm_fast_unknown_step(
-    andor3: Andor3Ad, sim_motor: ThreeAxisStage, RE: RunEngine
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
 ):
     docs = defaultdict(list)
 
@@ -129,7 +131,7 @@ async def test_stxm_fast_unknown_step(
     docs = defaultdict(list)
     RE(
         stxm_fast(
-            det=andor3,
+            det=andor2,
             count_time=count_time,
             step_motor=sim_motor.x,
             step_start=step_start,
@@ -156,7 +158,7 @@ async def test_stxm_fast_unknown_step(
 
 
 async def test_stxm_step_with_home(
-    RE: RunEngine, sim_motor_step: SimThreeAxisStage, andor2: Andor2Ad
+    RE: RunEngine, sim_motor_step: SimThreeAxisStage, andor2: Andor2Detector
 ):
     docs = defaultdict(list)
 
@@ -198,7 +200,7 @@ async def test_stxm_step_with_home(
 
 
 async def test_stxm_step_without_home(
-    RE: RunEngine, sim_motor_step: ThreeAxisStage, andor2: Andor2Ad
+    RE: RunEngine, sim_motor_step: ThreeAxisStage, andor2: Andor2Detector
 ):
     docs = defaultdict(list)
 
@@ -240,7 +242,7 @@ async def test_stxm_step_without_home(
 
 
 async def test_stxm_fast_sim_flyable_motor(
-    andor2: Andor2Ad, sim_motor_fly: ThreeAxisStage, RE: RunEngine
+    andor2: Andor2Detector, sim_motor_fly: ThreeAxisStage, RE: RunEngine
 ):
     docs = defaultdict(list)
 

@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 from ophyd_async.core import (
-    DeviceCollector,
+    init_devices,
 )
 from ophyd_async.epics.motor import MotorLimitsException
 
@@ -11,7 +11,7 @@ from p99_bluesky.sim.sim_stages import SimThreeAxisStage
 
 @pytest.fixture
 async def sim_motor_step():
-    async with DeviceCollector():
+    async with init_devices():
         sim_motor_step = SimThreeAxisStage(name="sim_motor", instant=False)
 
     yield sim_motor_step

@@ -71,10 +71,10 @@ class SoftThreeAxisStage(Device):
     Notes
     -----
     Example usage::
-        async with DeviceCollector():
+        async with init_devices():
             xyz_stage = ThreeAxisStage("BLXX-MO-STAGE-XX:")
     Or::
-        with DeviceCollector():
+        with init_devices():
             xyz_stage = ThreeAxisStage("BLXX-MO-STAGE-XX:", suffix = [".any",
               ".there", ".motorPv"])
 
@@ -168,9 +168,9 @@ class SoftMotor(StandardReadable, Movable, Stoppable):
     @AsyncStatus.wrap
     async def kickoff(self):
         """Begin moving motor from prepared position to final position."""
-        assert (
-            self._fly_completed_position
-        ), "Motor must be prepared before attempting to kickoff"
+        assert self._fly_completed_position, (
+            "Motor must be prepared before attempting to kickoff"
+        )
 
         self._fly_status = self.set(
             self._fly_completed_position, timeout=self._fly_timeout

@@ -1,12 +1,12 @@
 import pytest
-from ophyd_async.core import DeviceCollector
+from ophyd_async.core import init_devices
 
 from p99_bluesky.devices.stages import ThreeAxisStage
 
 
 @pytest.fixture
 async def mock_three_axis_motor():
-    async with DeviceCollector(mock=True):
+    async with init_devices(mock=True):
         mock_three_axis_motor = ThreeAxisStage("BLxx-MO-xx-01:", "mock_three_axis_motor")
         # Signals connected here
 
