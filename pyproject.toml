@@ -17,7 +17,7 @@ dependencies = [
     "blueapi",
     "ophyd",
     "dls-dodal",
-    "ophyd-async",
+    "ophyd-async==v0.9.0",
     "bluesky",
 
 
