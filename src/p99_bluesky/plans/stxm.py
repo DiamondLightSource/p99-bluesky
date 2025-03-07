@@ -4,22 +4,25 @@ from blueapi.core import MsgGenerator
 from bluesky.preprocessors import (
     finalize_wrapper,
 )
+from ophyd_async.epics.adcore import AreaDetector, SingleTriggerDetector
 from ophyd_async.epics.motor import Motor
 
 from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.log import LOGGER
-from p99_bluesky.plan_stubs.motor_plan import (
-    check_within_limit,
-    get_motor_positions,
-    get_velocity_and_step_size,
-)
 from p99_bluesky.plans.fast_scan import fast_scan_grid
 from p99_bluesky.sim.sim_stages import p99SimMotor
 from p99_bluesky.utility.utility import step_size_to_step_num
 
+from ..plan_stubs import (
+    check_within_limit,
+    get_motor_positions,
+    get_velocity_and_step_size,
+    set_area_detector_acquire_time,
+)
+
 
 def stxm_step(
-    det: Andor2Detector,
+    det: AreaDetector | SingleTriggerDetector,
     count_time: float,
     x_step_motor: Motor | p99SimMotor,
     x_step_start: float,
@@ -91,7 +94,7 @@ def stxm_step(
             x_step_motor, y_step_motor
         )
     # Set count time on detector
-    yield from bps.abs_set(det.driver.acquire_time, count_time)
+    yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
     # add 1 to step number to include the end point
     yield from finalize_wrapper(
         plan=bp.grid_scan(
@@ -180,7 +183,7 @@ def stxm_fast(
         ],
         step_motor,
     )
-    # Add move back  positon to origin
+    # Add move back position to origin
     if home:
         clean_up_arg["Origin"] = yield from get_motor_positions(scan_motor, step_motor)
 
@@ -217,7 +220,7 @@ def stxm_fast(
         + f", number of step = {num_of_step}."
     )
     # Set count time on detector
-    yield from bps.abs_set(det.driver.acquire_time, count_time)
+    yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
     yield from finalize_wrapper(
         plan=fast_scan_grid(
             [det],
@@ -230,6 +233,7 @@ def stxm_fast(
             scan_end,
             velocity,
             snake_axes=snake_axes,
+            md=md,
         ),
         final_plan=clean_up(**clean_up_arg),
     )
