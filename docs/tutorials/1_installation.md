@@ -1,42 +1,51 @@
 # Installation
 
-## Check your version of python
+## Prerequisites
 
-You will need python 3.8 or later. You can check your version of python by
-typing into a terminal:
+Before installing, ensure you have Python 3.8 or later. You can check your Python version by running the following command in your terminal:
 
-```
-$ python3 --version
+```bash
+python3 --version
 ```
 
 ## Create a virtual environment
 
-It is recommended that you install into a “virtual environment” so this
-installation will not interfere with any existing Python software:
+It's highly recommended to install ``p99_bluesky`` within a virtual environment. This isolates the project's dependencies and prevents conflicts with other Python installations.
 
-```
-$ python3 -m venv /path/to/venv
-$ source /path/to/venv/bin/activate
+```bash
+python3 -m venv /path/to/venv
 ```
 
-## Installing the library
+Replace /path/to/your/venv with the desired directory for your virtual environment (e.g., ~/p99_venv).
 
-You can now use `pip` to install the library and its dependencies:
+## Activate the virtual environment:
 
+```bash
+source /path/to/venv/bin/activate
 ```
+
+(On Windows, use \path\to\your\venv\Scripts\activate)
+
+Once activated, your terminal prompt will typically change to indicate that the virtual environment is active.
+
+## Installing the p99_bluesky Library
+
+With the virtual environment activated, you can now install ``p99_bluesky`` using ``pip``:
+
+```bash
 $ python3 -m pip install p99_bluesky
 ```
 
-If you require a feature that is not currently released you can also install
-from github:
+To install the latest development version directly from GitHub:
 
-```
+```bash
 $ python3 -m pip install git+https://github.com/Relm-Arrowny/p99_bluesky.git
 ```
+##Verifying the Installation
 
-The library should now be installed and the commandline interface on your path.
-You can check the version that has been installed by typing:
+After installation, you can verify that `p99_bluesky` is installed correctly and check its version by running:
 
-```
+```bash
 $ p99_bluesky --version
 ```
+This command should display the installed version number.
