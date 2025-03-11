@@ -1,7 +1,7 @@
 Running Bluesky on p99
 ======================
 
-This document outlines three methods for running Bluesky on the p99 beamline: using the Athena service, running Bluesky locally, or using a local blueAPI instance.
+This document outlines three methods for running Bluesky on the p99 beamline: using the `Athena service <#athena>`_, running `Bluesky locally <#local-bluesky>`_, or using a local `blueAPI instance <#local-blueapi>`_.
 
 Athena
 ------
