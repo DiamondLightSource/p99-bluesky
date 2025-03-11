@@ -23,7 +23,6 @@ or HTTPS:
 
     SSH is recommended and to setup ssh key for git, follow the instruction `here. <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`__
 
-
 Install dependencies
 --------------------
 
