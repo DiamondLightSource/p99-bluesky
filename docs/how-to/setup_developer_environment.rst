@@ -4,7 +4,7 @@ Setup Developer Environment
 Clone the repository
 --------------------
 
-To Clone the repository locally use `Git <https://git-scm.com/downloads>`_:
+To Clone the repository locally use `Git <https://git-scm.com/downloads>`__:
 
 SSH:
 
@@ -21,13 +21,13 @@ or HTTPS:
 
 .. tip::
 
-    SSH is recommended and to setup ssh key for git, follow the instruction `here. <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`_
+    SSH is recommended and to setup ssh key for git, follow the instruction `here. <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`__
 
 
 Install dependencies
 --------------------
 
-You can choose to either develop on the host machine using a `venv` (which requires python 3.10 or later) or to run in a container under `VSCode <https://code.visualstudio.com/>`_.
+You can choose to either develop on the host machine using a `venv` (which requires python 3.10 or later) or to run in a container under `VSCode <https://code.visualstudio.com/>`__.
 
 
 .. tab-set::
@@ -63,14 +63,14 @@ You can choose to either develop on the host machine using a `venv` (which requi
 
         .. tip::
         
-            For working on window you can make use of wsl and docker destop more detail is `here. <https://code.visualstudio.com/docs/devcontainers/containers>`_
+            For working on window you can make use of wsl and docker destop more detail is `here. <https://code.visualstudio.com/docs/devcontainers/containers>`__
 
-            More detail on how to setup vscode outside diamond is `here. <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`_
+            More detail on how to setup vscode outside diamond is `here. <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`__
 
 
         .. note::
 
-            If you are at DLS and podman is not setup you can find more detail on `setting up podman and its fix for devcontainer features <https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features) and then follow [these instructions](https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/>`_ for setting up devcontainers on a DLS workstation.
+            If you are at DLS and podman is not setup you can find more detail on `setting up podman and its fix for devcontainer features <https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features) and then follow [these instructions](https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/>`__.
 
 
 
