@@ -33,32 +33,26 @@ You can choose to either develop on the host machine using a `venv` (which requi
 
     .. tab-item:: VSCode devcontainer
 
-        At any diamond teminal type:
+        At any diamond terminal type:
         
         .. code::
 
             module load vscode
             code ./p99-bluesky
 
-        Once vscode is running, hold ctri+shift+p or go to the search bar and type:
+        Once vscode is running, hold ctrl+shift+p or go to the search bar and type:
 
         .. code::
         
-            > Dev containers:Reubuild container
+            > Dev containers:Rebuild container
 
-        This will buiild the Dev container using Docker by default, to change the setting hold ctri+shit+p again and type:
+        This will build the Dev container using Docker by default, to change the setting hold ctrl+shit+p again and type:
         
         .. code::
         
             > Dev containers:settings
 
-        In setting under user change:
-        
-        .. code::
-        
-            Dev>Contrainers:Docker Path 
-        
-        to podman.
+        In setting under user>Dev>Containers: Docker Path change docker to podman.        
 
         .. tip::
         

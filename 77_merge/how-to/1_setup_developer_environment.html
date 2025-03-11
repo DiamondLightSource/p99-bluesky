@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Setup Developer Environment &#8212; p99_bluesky 0.1.2.dev6+g6d26b3a documentation</title>
+    <title>Setup Developer Environment &#8212; p99_bluesky 0.1.2.dev7+g6ad1f08 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=809aa9e0"></script>
+    <script src="../_static/documentation_options.js?v=131a36a9"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -487,24 +487,20 @@
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
 VSCode devcontainer</label><div class="sd-tab-content docutils">
-<p>At any diamond teminal type:</p>
+<p>At any diamond terminal type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="n">load</span> <span class="n">vscode</span>
 <span class="n">code</span> <span class="o">./</span><span class="n">p99</span><span class="o">-</span><span class="n">bluesky</span>
 </pre></div>
 </div>
-<p>Once vscode is running, hold ctri+shift+p or go to the search bar and type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Dev</span> <span class="n">containers</span><span class="p">:</span><span class="n">Reubuild</span> <span class="n">container</span>
+<p>Once vscode is running, hold ctrl+shift+p or go to the search bar and type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Dev</span> <span class="n">containers</span><span class="p">:</span><span class="n">Rebuild</span> <span class="n">container</span>
 </pre></div>
 </div>
-<p>This will buiild the Dev container using Docker by default, to change the setting hold ctri+shit+p again and type:</p>
+<p>This will build the Dev container using Docker by default, to change the setting hold ctrl+shit+p again and type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Dev</span> <span class="n">containers</span><span class="p">:</span><span class="n">settings</span>
 </pre></div>
 </div>
-<p>In setting under user change:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Dev</span><span class="o">&gt;</span><span class="n">Contrainers</span><span class="p">:</span><span class="n">Docker</span> <span class="n">Path</span>
-</pre></div>
-</div>
-<p>to podman.</p>
+<p>In setting under user&gt;Dev&gt;Containers: Docker Path change docker to podman.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>For working on window you can make use of wsl and docker destop more detail is <a class="reference external" href="https://code.visualstudio.com/docs/devcontainers/containers">here.</a></p>

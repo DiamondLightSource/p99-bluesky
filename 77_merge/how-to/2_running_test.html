@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Build and test &#8212; p99_bluesky 0.1.2.dev6+g6d26b3a documentation</title>
+    <title>Build and test &#8212; p99_bluesky 0.1.2.dev7+g6ad1f08 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=809aa9e0"></script>
+    <script src="../_static/documentation_options.js?v=131a36a9"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -473,14 +473,17 @@
 <p class="admonition-title">Note</p>
 <p>In p99 tox is a collect of commands which you can run seperatly in terminal.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">commands</span> <span class="o">=</span>
-<span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="p">:</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
-<span class="nb">type</span><span class="o">-</span><span class="n">checking</span><span class="p">:</span> <span class="n">pyright</span> <span class="n">src</span> <span class="n">tests</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
-<span class="n">tests</span><span class="p">:</span> <span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">p99_bluesky</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span> <span class="n">term</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span> <span class="n">xml</span><span class="p">:</span><span class="n">cov</span><span class="o">.</span><span class="n">xml</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
-<span class="n">docs</span><span class="p">:</span> <span class="n">sphinx</span><span class="o">-</span><span class="p">{</span><span class="n">posargs</span><span class="p">:</span><span class="n">build</span> <span class="o">-</span><span class="n">EW</span> <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">going</span><span class="p">}</span> <span class="o">-</span><span class="n">T</span> <span class="n">docs</span> <span class="n">build</span><span class="o">/</span><span class="n">html</span>
+    <span class="n">pre</span><span class="o">-</span><span class="n">commit</span><span class="p">:</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
+    <span class="nb">type</span><span class="o">-</span><span class="n">checking</span><span class="p">:</span> <span class="n">pyright</span> <span class="n">src</span> <span class="n">tests</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
+    <span class="n">tests</span><span class="p">:</span> <span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">p99_bluesky</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span> <span class="n">term</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span> <span class="n">xml</span><span class="p">:</span><span class="n">cov</span><span class="o">.</span><span class="n">xml</span> <span class="p">{</span><span class="n">posargs</span><span class="p">}</span>
+    <span class="n">docs</span><span class="p">:</span> <span class="n">sphinx</span><span class="o">-</span><span class="p">{</span><span class="n">posargs</span><span class="p">:</span><span class="n">build</span> <span class="o">-</span><span class="n">EW</span> <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">going</span><span class="p">}</span> <span class="o">-</span><span class="n">T</span> <span class="n">docs</span> <span class="n">build</span><span class="o">/</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>You can also auto correct pre-commit error by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ruff</span> <span class="n">check</span> <span class="o">./</span><span class="n">src</span><span class="o">/</span><span class="n">p99_bluesky</span> <span class="o">--</span><span class="n">fix</span>
+
+
+<span class="n">dfjsmdklfm</span>
 </pre></div>
 </div>
 </div>
