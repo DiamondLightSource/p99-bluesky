@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation &#8212; p99_bluesky 0.1.2.dev7+g6ad1f08 documentation</title>
+    <title>Installation &#8212; p99_bluesky 0.1.2.dev9+gfc8f621 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=131a36a9"></script>
+    <script src="../_static/documentation_options.js?v=df5c7710"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
     <link rel="icon" href="../_static/dls-logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Running bluesky on p99" href="2_start_bluesky.html" />
+    <link rel="next" title="Running Bluesky on p99" href="2_start_bluesky.html" />
     <link rel="prev" title="Tutorials" href="../tutorials.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -400,7 +400,7 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="2_start_bluesky.html">Running bluesky on p99</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_start_bluesky.html">Running Bluesky on p99</a></li>
 </ul>
 </div>
 </nav></div>
@@ -463,39 +463,45 @@
                   
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
-<section id="check-your-version-of-python">
-<h2>Check your version of python<a class="headerlink" href="#check-your-version-of-python" title="Link to this heading">#</a></h2>
-<p>You will need python 3.8 or later. You can check your version of python by
-typing into a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 --version
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Before installing, ensure you have Python 3.8 or later. You can check your Python version by running the following command in your terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>--version
 </pre></div>
 </div>
 </section>
 <section id="create-a-virtual-environment">
 <h2>Create a virtual environment<a class="headerlink" href="#create-a-virtual-environment" title="Link to this heading">#</a></h2>
-<p>It is recommended that you install into a “virtual environment” so this
-installation will not interfere with any existing Python software:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m venv /path/to/venv
-$ source /path/to/venv/bin/activate
+<p>It’s highly recommended to install <code class="docutils literal notranslate"><span class="pre">p99_bluesky</span></code> within a virtual environment. This isolates the project’s dependencies and prevents conflicts with other Python installations.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>/path/to/venv
 </pre></div>
 </div>
+<p>Replace /path/to/your/venv with the desired directory for your virtual environment (e.g., ~/p99_venv).</p>
 </section>
-<section id="installing-the-library">
-<h2>Installing the library<a class="headerlink" href="#installing-the-library" title="Link to this heading">#</a></h2>
-<p>You can now use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install the library and its dependencies:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m pip install p99_bluesky
+<section id="activate-the-virtual-environment">
+<h2>Activate the virtual environment:<a class="headerlink" href="#activate-the-virtual-environment" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/path/to/venv/bin/activate
 </pre></div>
 </div>
-<p>If you require a feature that is not currently released you can also install
-from github:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 -m pip install git+https://github.com/Relm-Arrowny/p99_bluesky.git
+<p>(On Windows, use \path\to\your\venv\Scripts\activate)</p>
+<p>Once activated, your terminal prompt will typically change to indicate that the virtual environment is active.</p>
+</section>
+<section id="installing-the-p99-bluesky-library">
+<h2>Installing the p99_bluesky Library<a class="headerlink" href="#installing-the-p99-bluesky-library" title="Link to this heading">#</a></h2>
+<p>With the virtual environment activated, you can now install <code class="docutils literal notranslate"><span class="pre">p99_bluesky</span></code> using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>p99_bluesky
 </pre></div>
 </div>
-<p>The library should now be installed and the commandline interface on your path.
-You can check the version that has been installed by typing:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ p99_bluesky --version
+<p>To install the latest development version directly from GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/Relm-Arrowny/p99_bluesky.git
 </pre></div>
 </div>
+<p>##Verifying the Installation</p>
+<p>After installation, you can verify that <code class="docutils literal notranslate"><span class="pre">p99_bluesky</span></code> is installed correctly and check its version by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>p99_bluesky<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>This command should display the installed version number.</p>
 </section>
 </section>
 
@@ -523,7 +529,7 @@ You can check the version that has been installed by typing:</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Running bluesky on p99</p>
+        <p class="prev-next-title">Running Bluesky on p99</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -546,9 +552,10 @@ You can check the version that has been installed by typing:</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#check-your-version-of-python">Check your version of python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-virtual-environment">Create a virtual environment</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-the-library">Installing the library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activate-the-virtual-environment">Activate the virtual environment:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-the-p99-bluesky-library">Installing the p99_bluesky Library</a></li>
 </ul>
   </nav></div>
 

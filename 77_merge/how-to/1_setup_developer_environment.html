@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Setup Developer Environment &#8212; p99_bluesky 0.1.2.dev7+g6ad1f08 documentation</title>
+    <title>Setup Developer Environment &#8212; p99_bluesky 0.1.2.dev9+gfc8f621 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=131a36a9"></script>
+    <script src="../_static/documentation_options.js?v=df5c7710"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -464,60 +464,69 @@
                   
   <section id="setup-developer-environment">
 <h1>Setup Developer Environment<a class="headerlink" href="#setup-developer-environment" title="Link to this heading">#</a></h1>
+<p>This document outlines the steps to set up a developer environment for the <code class="docutils literal notranslate"><span class="pre">p99-bluesky</span></code> project. You can choose to develop within a VSCode devcontainer or using a local virtual environment.</p>
 <section id="clone-the-repository">
-<h2>Clone the repository<a class="headerlink" href="#clone-the-repository" title="Link to this heading">#</a></h2>
-<p>To Clone the repository locally use <a class="reference external" href="https://git-scm.com/downloads">Git</a>:</p>
-<p>SSH:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">DiamondLightSource</span><span class="o">/</span><span class="n">p99</span><span class="o">-</span><span class="n">bluesky</span><span class="o">.</span><span class="n">git</span>
+<h2>Clone the Repository<a class="headerlink" href="#clone-the-repository" title="Link to this heading">#</a></h2>
+<p>To clone the repository locally, use <a class="reference external" href="https://git-scm.com/downloads">Git</a></p>
+<p><strong>SSH (Recommended):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:DiamondLightSource/p99-bluesky.git
 </pre></div>
 </div>
-<p>or HTTPS:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">DiamondLightSource</span><span class="o">/</span><span class="n">p99</span><span class="o">-</span><span class="n">bluesky</span><span class="o">.</span><span class="n">git</span>
+<p><strong>HTTPS:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/DiamondLightSource/p99-bluesky.git
 </pre></div>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>SSH is recommended and to setup ssh key for git, follow the instruction <a class="reference external" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">here.</a></p>
+<p>SSH is the recommended method. To set up SSH keys for Git, follow the instructions : <a class="reference external" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">here.</a></p>
 </div>
 </section>
 <section id="install-dependencies">
-<h2>Install dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading">#</a></h2>
-<p>You can choose to either develop on the host machine using a <a class="reference external" href="https://docs.python.org/3/library/venv.html#module-venv" title="(in Python v3.13)"><code class="xref any docutils literal notranslate"><span class="pre">venv</span></code></a> (which requires python 3.10 or later) or to run in a container under <a class="reference external" href="https://code.visualstudio.com/">VSCode</a>.</p>
+<h2>Install Dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading">#</a></h2>
+<p>You can choose to develop on your host machine using a <code class="docutils literal notranslate"><span class="pre">venv</span></code> (Python 3.10 or later required) or within a container using <a class="reference external" href="https://code.visualstudio.com/">VSCode</a></p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
-VSCode devcontainer</label><div class="sd-tab-content docutils">
-<p>At any diamond terminal type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="n">load</span> <span class="n">vscode</span>
-<span class="n">code</span> <span class="o">./</span><span class="n">p99</span><span class="o">-</span><span class="n">bluesky</span>
+VSCode Devcontainer</label><div class="sd-tab-content docutils">
+<p><strong>On a Diamond Light Source terminal:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module<span class="w"> </span>load<span class="w"> </span>vscode
+code<span class="w"> </span>./p99-bluesky
 </pre></div>
 </div>
-<p>Once vscode is running, hold ctrl+shift+p or go to the search bar and type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Dev</span> <span class="n">containers</span><span class="p">:</span><span class="n">Rebuild</span> <span class="n">container</span>
+<p>Once VSCode is running:</p>
+<ol class="arabic">
+<li><p>Press <code class="docutils literal notranslate"><span class="pre">`Ctrl+Shift+P`</span></code> (or <code class="docutils literal notranslate"><span class="pre">Cmd+Shift+P</span></code> on macOS) or open the command palette and type:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>Dev<span class="w"> </span>Containers:<span class="w"> </span>Rebuild<span class="w"> </span>Container
 </pre></div>
 </div>
-<p>This will build the Dev container using Docker by default, to change the setting hold ctrl+shit+p again and type:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">Dev</span> <span class="n">containers</span><span class="p">:</span><span class="n">settings</span>
+<p>This will build the development container using Docker by default.</p>
+</li>
+<li><p>To change the container runtime to Podman (recommended at DLS), press <code class="docutils literal notranslate"><span class="pre">`Ctrl+Shift+P`</span></code> again and type:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>Dev<span class="w"> </span>Containers:<span class="w"> </span>Settings
 </pre></div>
 </div>
-<p>In setting under user&gt;Dev&gt;Containers: Docker Path change docker to podman.</p>
+<p>In the settings, navigate to <code class="docutils literal notranslate"><span class="pre">User</span> <span class="pre">&gt;</span> <span class="pre">Dev</span> <span class="pre">&gt;</span> <span class="pre">Containers:</span> <span class="pre">Docker</span> <span class="pre">Path</span></code> and change the value to <code class="docutils literal notranslate"><span class="pre">podman</span></code>.</p>
+</li>
+</ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>For working on window you can make use of wsl and docker destop more detail is <a class="reference external" href="https://code.visualstudio.com/docs/devcontainers/containers">here.</a></p>
-<p>More detail on how to setup vscode outside diamond is <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers">here.</a></p>
+<ul class="simple">
+<li><p>For development on Windows, you can use WSL and Docker Desktop. More details are available <a class="reference external" href="https://code.visualstudio.com/docs/devcontainers/containers">here.</a></p></li>
+<li><p>For setting up VSCode devcontainers outside of Diamond Light Source, refer to this <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers">guide.</a></p></li>
+</ul>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you are at DLS and podman is not setup you can find more detail on <a class="reference external" href="https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features)andthenfollow[theseinstructions](https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/">setting up podman and its fix for devcontainer features</a>.</p>
+<p>If you are at DLS and Podman is not set up, follow these <a class="reference external" href="https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features">instructions</a> to install Podman and configure it for devcontainer features. Then, follow the general devcontainer setup <a class="reference external" href="https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/">instructions.</a>.</p>
 </div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-1">
-Local virtualenv</label><div class="sd-tab-content docutils">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span><span class="mf">.11</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">venv_p99</span>
-<span class="n">source</span> <span class="n">venv_p99</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
-<span class="n">cd</span> <span class="n">p99</span><span class="o">-</span><span class="n">bluesky</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;.[dev]&#39;</span><span class="n">d</span>
+Local Virtual Environment</label><div class="sd-tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv_p99
+<span class="nb">source</span><span class="w"> </span>venv_p99/bin/activate
+<span class="nb">cd</span><span class="w"> </span>p99-bluesky
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[dev]&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -572,8 +581,8 @@ Local virtualenv</label><div class="sd-tab-content docutils">
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clone-the-repository">Clone the repository</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dependencies">Install dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clone-the-repository">Clone the Repository</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-dependencies">Install Dependencies</a></li>
 </ul>
   </nav></div>
 

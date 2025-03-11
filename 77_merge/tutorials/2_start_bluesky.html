@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running bluesky on p99 &#8212; p99_bluesky 0.1.2.dev7+g6ad1f08 documentation</title>
+    <title>Running Bluesky on p99 &#8212; p99_bluesky 0.1.2.dev9+gfc8f621 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=131a36a9"></script>
+    <script src="../_static/documentation_options.js?v=df5c7710"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -400,7 +400,7 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="1_installation.html">Installation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Running bluesky on p99</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Running Bluesky on p99</a></li>
 </ul>
 </div>
 </nav></div>
@@ -444,7 +444,7 @@
     
     <li class="breadcrumb-item"><a href="../tutorials.html" class="nav-link">Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Running bluesky on p99</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Running Bluesky on p99</span></li>
   </ul>
 </nav>
 </div>
@@ -462,44 +462,46 @@
                 <article class="bd-article">
                   
   <section id="running-bluesky-on-p99">
-<h1>Running bluesky on p99<a class="headerlink" href="#running-bluesky-on-p99" title="Link to this heading">#</a></h1>
+<h1>Running Bluesky on p99<a class="headerlink" href="#running-bluesky-on-p99" title="Link to this heading">#</a></h1>
+<p>This document outlines three methods for running Bluesky on the p99 beamline: using the Athena service, running Bluesky locally, or using a local blueAPI instance.</p>
 <section id="athena">
 <h2>Athena<a class="headerlink" href="#athena" title="Link to this heading">#</a></h2>
-<p>Athena service with blueAPI should already be running on Kubernetes sever and blueAPI control can be access <a class="reference external" href="https://p99-blueapi.diamond.ac.uk/docs">here</a>.</p>
-<p>For developer Kubernetes deployment landing page is <a class="reference external" href="https://k8s-p99.diamond.ac.uk/">here.</a></p>
+<p>The Athena service provides a pre-configured Bluesky environment running on a Kubernetes cluster. You can access the blueAPI control interface for Athena <a class="reference external" href="https://p99-blueapi.diamond.ac.uk/docs">here</a>.</p>
+<p>For developers who need to access the Kubernetes deployment directly, the landing page is available <a class="reference external" href="https://k8s-p99.diamond.ac.uk/">here</a>. Note that authentication may be required.</p>
 </section>
 <section id="local-bluesky">
-<h2>Local bluesky<a class="headerlink" href="#local-bluesky" title="Link to this heading">#</a></h2>
-<p>For testing it is often easier to run bluesky locally.
-A template with p99 hardware setting can be found in:
-<code class="docutils literal notranslate"><span class="pre">src/p99-bluesky/tests/jupyter_tests/p99_bluesky_template.ipynb</span></code></p>
-<p>To open the template run:</p>
+<h2>Local Bluesky<a class="headerlink" href="#local-bluesky" title="Link to this heading">#</a></h2>
+<p>For rapid testing and development, running Bluesky locally is often the most convenient approach. A Jupyter Notebook template pre-configured with p99 hardware settings is available at: <code class="docutils literal notranslate"><span class="pre">src/p99-bluesky/tests/jupyter_tests/p99_bluesky_template.ipynb</span></code>.</p>
+<p>To open the template, execute the following command within your activated virtual environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jupyter</span> <span class="n">notebook</span> <span class="o">./</span><span class="n">tests</span><span class="o">/</span><span class="n">jupyter_tests</span><span class="o">/</span><span class="n">p99_bluesky_template</span><span class="o">.</span><span class="n">ipynb</span>
 </pre></div>
 </div>
+<p>This notebook provides a starting point for interacting with p99 hardware.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>P99 hardware is only available on its own network. The easiest way is to run test is make use of p99-ws001 via ssh:</p>
+<p>P99 hardware is only accessible on its dedicated network. The simplest method for testing is to connect to <code class="docutils literal notranslate"><span class="pre">p99-ws001</span></code> via SSH:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">-</span><span class="n">X</span> <span class="n">p99</span><span class="o">-</span><span class="n">ws001</span>
 </pre></div>
 </div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Devices are imported from <a class="reference external" href="https://github.com/DiamondLightSource/dodal/blob/main/src/dodal/beamlines/p99.py">dodal</a>,
-for more detail on how to create new devices see <a class="reference external" href="https://blueskyproject.io/ophyd-async/main/tutorials/implementing-devices.html">here</a>.</p>
-<p>This <a class="reference external" href="https://diamondlightsource.github.io/dodal/main/how-to/make-new-ophyd-async-device.html">flowchart</a> can be useful when deciding what device it should be.</p>
-<p>It is also worth keeping in mind <a class="reference external" href="https://diamondlightsource.github.io/dodal/main/reference/device-standards.html">device standard</a> when creating a new device.</p>
+<p>Devices are imported from the <a class="reference external" href="https://github.com/DiamondLightSource/dodal/blob/main/src/dodal/beamlines/p99.py">dodal</a> library. For detailed information on creating new devices, refer to the <a class="reference external" href="https://blueskyproject.io/ophyd-async/main/tutorials/implementing-devices.html">ophyd-async</a> documentation.</p>
+<p>The following <a class="reference external" href="https://diamondlightsource.github.io/dodal/main/how-to/make-new-ophyd-async-device.html">flowchart</a> can assist in determining the appropriate device type.</p>
+<p>Adhering to the <a class="reference external" href="https://diamondlightsource.github.io/dodal/main/reference/device-standards.html">device standards</a> is crucial when creating new devices.</p>
 </div>
 </section>
 <section id="local-blueapi">
 <h2>Local blueAPI<a class="headerlink" href="#local-blueapi" title="Link to this heading">#</a></h2>
-<p>To run blueAPI locally you will need to start an RabbitMQ instance, the easiest way is make use of blueAPI script <a class="reference external" href="https://diamondlightsource.github.io/blueapi/main/tutorials/run-bus.html">here</a></p>
-<p>With RabbitMQ running run:</p>
+<p>To run blueAPI locally, you must first start a RabbitMQ instance. If you are using podman, you can do this with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">podman</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="mi">5672</span><span class="p">:</span><span class="mi">5672</span> <span class="n">rabbitmq</span><span class="p">:</span><span class="mi">3</span><span class="o">-</span><span class="n">management</span>
+</pre></div>
+</div>
+<p>Once RabbitMQ is running, execute the following command from the project root directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">blueapi</span> <span class="o">--</span><span class="n">config</span> <span class="o">./</span><span class="n">src</span><span class="o">/</span><span class="n">yaml_config</span><span class="o">/</span><span class="n">blueapi_config</span><span class="o">.</span><span class="n">yaml</span> <span class="n">serve</span>
 </pre></div>
 </div>
-<p>This will start blueAPI with p99 configuration. To modify the configuration you can make change to <code class="docutils literal notranslate"><span class="pre">/workspaces/p99-bluesky/src/yaml_config/blueapi_config.yaml</span></code>.</p>
+<p>This will start blueAPI with the p99 configuration. To modify the configuration, edit the <code class="docutils literal notranslate"><span class="pre">/workspaces/p99-bluesky/src/yaml_config/blueapi_config.yaml</span></code> file.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
 <span class="n">stomp</span><span class="p">:</span>
   <span class="n">host</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span>
@@ -520,25 +522,25 @@ for more detail on how to create new devices see <a class="reference external" h
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>To add devices and plans you can insert extra sources:</p>
-<p>for devices:</p>
+<p>To add custom devices and plans, specify their module paths within the configuration file’s <code class="docutils literal notranslate"><span class="pre">env.sources</span></code> section:</p>
+<p>For devices (example device path: <code class="docutils literal notranslate"><span class="pre">p99_bluesky.devices</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="p">:</span>
     <span class="n">sources</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">kind</span><span class="p">:</span> <span class="n">deviceFunctions</span>
-        <span class="n">module</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">device</span> <span class="n">path</span><span class="o">&gt;</span>
+        <span class="n">module</span><span class="p">:</span> <span class="n">p99_bluesky</span><span class="o">.</span><span class="n">devices</span>
 </pre></div>
 </div>
-<p>for plans:</p>
+<p>For plans (example plans path: <code class="docutils literal notranslate"><span class="pre">p99_bluesky.plans</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="p">:</span>
     <span class="n">sources</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">kind</span><span class="p">:</span> <span class="n">planFunctions</span>
-        <span class="n">module</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">plans</span> <span class="n">path</span><span class="o">&gt;</span>
+        <span class="n">module</span><span class="p">:</span> <span class="n">p99_bluesky</span><span class="o">.</span><span class="n">plans</span>
 </pre></div>
 </div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Plans must have return typing <code class="docutils literal notranslate"><span class="pre">MsgGenerator</span></code> and complete typing hint for blueAPI to pick up, see example:</p>
+<p>Plans must have a return type of <code class="docutils literal notranslate"><span class="pre">MsgGenerator</span></code> from the <code class="docutils literal notranslate"><span class="pre">bluesky.protocols</span></code> library and complete type hints for blueAPI to recognize them. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">stxm_fast</span><span class="p">(</span>
     <span class="n">det</span><span class="p">:</span> <span class="n">Andor2Detector</span><span class="p">,</span>
     <span class="n">count_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -608,7 +610,7 @@ for more detail on how to create new devices see <a class="reference external" h
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#athena">Athena</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-bluesky">Local bluesky</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-bluesky">Local Bluesky</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-blueapi">Local blueAPI</a></li>
 </ul>
   </nav></div>

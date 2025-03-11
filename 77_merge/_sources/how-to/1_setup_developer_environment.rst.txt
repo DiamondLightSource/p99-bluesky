@@ -1,77 +1,77 @@
 Setup Developer Environment
 ===========================
 
-Clone the repository
+This document outlines the steps to set up a developer environment for the ``p99-bluesky`` project. You can choose to develop within a VSCode devcontainer or using a local virtual environment.
+
+Clone the Repository
 --------------------
 
-To Clone the repository locally use `Git <https://git-scm.com/downloads>`__:
+To clone the repository locally, use `Git <https://git-scm.com/downloads>`__
 
-SSH:
+**SSH (Recommended):**
 
-
-.. code::
+.. code:: bash
 
     git clone git@github.com:DiamondLightSource/p99-bluesky.git
 
-or HTTPS:
+**HTTPS:**
 
-.. code::
+.. code:: bash
 
     git clone https://github.com/DiamondLightSource/p99-bluesky.git
 
 .. tip::
 
-    SSH is recommended and to setup ssh key for git, follow the instruction `here. <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`__
+    SSH is the recommended method. To set up SSH keys for Git, follow the instructions : `here. <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`__
 
-Install dependencies
+Install Dependencies
 --------------------
 
-You can choose to either develop on the host machine using a `venv` (which requires python 3.10 or later) or to run in a container under `VSCode <https://code.visualstudio.com/>`__.
-
+You can choose to develop on your host machine using a ``venv`` (Python 3.10 or later required) or within a container using `VSCode <https://code.visualstudio.com/>`__
 
 .. tab-set::
 
-    .. tab-item:: VSCode devcontainer
+    .. tab-item:: VSCode Devcontainer
 
-        At any diamond terminal type:
-        
-        .. code::
+        **On a Diamond Light Source terminal:**
+
+        .. code:: bash
 
             module load vscode
             code ./p99-bluesky
 
-        Once vscode is running, hold ctrl+shift+p or go to the search bar and type:
+        Once VSCode is running:
 
-        .. code::
-        
-            > Dev containers:Rebuild container
+        1.  Press ```Ctrl+Shift+P``` (or ``Cmd+Shift+P`` on macOS) or open the command palette and type:
 
-        This will build the Dev container using Docker by default, to change the setting hold ctrl+shit+p again and type:
-        
-        .. code::
-        
-            > Dev containers:settings
+            .. code:: bash
 
-        In setting under user>Dev>Containers: Docker Path change docker to podman.        
+                > Dev Containers: Rebuild Container
+
+            This will build the development container using Docker by default.
+
+        2.  To change the container runtime to Podman (recommended at DLS), press ```Ctrl+Shift+P``` again and type:
+
+            .. code:: bash
+
+                > Dev Containers: Settings
+
+            In the settings, navigate to ``User > Dev > Containers: Docker Path`` and change the value to ``podman``.
 
         .. tip::
-        
-            For working on window you can make use of wsl and docker destop more detail is `here. <https://code.visualstudio.com/docs/devcontainers/containers>`__
 
-            More detail on how to setup vscode outside diamond is `here. <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`__
-
+            * For development on Windows, you can use WSL and Docker Desktop. More details are available `here. <https://code.visualstudio.com/docs/devcontainers/containers>`__
+            * For setting up VSCode devcontainers outside of Diamond Light Source, refer to this `guide. <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`__
 
         .. note::
 
-            If you are at DLS and podman is not setup you can find more detail on `setting up podman and its fix for devcontainer features <https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features) and then follow [these instructions](https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/>`__.
+            If you are at DLS and Podman is not set up, follow these `instructions <https://dev-portal.diamond.ac.uk/guide/containers/tutorials/podman/#enable-use-of-vscode-features>`__ to install Podman and configure it for devcontainer features. Then, follow the general devcontainer setup `instructions. <https://dev-portal.diamond.ac.uk/guide/containers/tutorials/devcontainer/>`__.
 
+    .. tab-item:: Local Virtual Environment
 
-
-    .. tab-item:: Local virtualenv
-
-        .. code::
+        .. code:: bash
 
             python3.11 -m venv venv_p99
             source venv_p99/bin/activate
             cd p99-bluesky
-            pip install -e '.[dev]'d
+            pip install -e '.[dev]'
