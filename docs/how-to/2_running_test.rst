@@ -15,7 +15,7 @@ To execute the test suite in your terminal, use ``tox``:
 The ``-p`` flag enables parallel test execution, which significantly speeds up the process.
 
 Understanding ``tox``
--------------------
+---------------------
 
 In the ``p99-bluesky`` project, ``tox`` is configured to run a series of commands defined in the ``pyproject.toml`` file. These commands can also be executed individually in your terminal.
 
