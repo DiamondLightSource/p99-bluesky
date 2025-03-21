@@ -33,3 +33,12 @@ To automatically correct code formatting and linting errors identified by ``ruff
     ruff check ./src/p99_bluesky --fix
 
 This command will apply fixes to the source code directly. It is recommended to run this command before committing changes.
+
+Running System Tests
+--------------------
+
+To run system you are required to have access to `Athena services <https://p99-blueapi.diamond.ac.uk/docs>`__. You will also need p99 RabbitMQ Password which can be found on k8s-p99.
+
+.. code:: bash
+
+    pytest ./system_tests/ --password <Password>
