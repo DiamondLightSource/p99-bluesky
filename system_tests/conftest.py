@@ -10,12 +10,6 @@ BEAMLINE = "p99"
 @pytest.fixture
 def task_definition() -> dict[str, Task]:
     return {
-        # "count": Task(
-        #     name="count",
-        #     params={
-        #         "detectors": "sample_stage.x",
-        #     },
-        # ),
         "stxm_step": Task(
             name="stxm_step",
             params={
