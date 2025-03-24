@@ -28,19 +28,19 @@ def task_definition() -> dict[str, Task]:
     }
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: pytest.Parser):
     parser.addoption("--password", action="store", default="")
 
 
 @pytest.fixture
-def config(request) -> ApplicationConfig:
+def config(request: pytest.FixtureRequest) -> ApplicationConfig:
     if BEAMLINE == "p99":
         password = request.config.getoption("--password")
         return ApplicationConfig(
             stomp=StompConfig(
                 host="172.23.177.208",
-                auth=BasicAuthentication(username="p99", password=password),
-            ),  # type: ignore
+                auth=BasicAuthentication(username="p99", password=password),  # type: ignore
+            ),
             api=RestConfig(host="p99-blueapi.diamond.ac.uk", port=443, protocol="https"),
         )
     else:
