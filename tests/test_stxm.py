@@ -158,7 +158,7 @@ async def test_stxm_fast_unknown_step(
 
 
 async def test_stxm_step_with_home(
-    RE: RunEngine, sim_motor_step: SimThreeAxisStage, andor2: Andor2Detector
+    RE: RunEngine, sim_motor_step: ThreeAxisStage, andor2: Andor2Detector
 ):
     docs = defaultdict(list)
 
