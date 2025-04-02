@@ -5,10 +5,9 @@ import bluesky.plan_stubs as bps
 from ophyd_async.epics.motor import Motor
 
 from p99_bluesky.log import LOGGER
-from p99_bluesky.sim.sim_stages import p99SimMotor
 
 
-def check_within_limit(values: list, motor: Motor | p99SimMotor):
+def check_within_limit(values: list, motor: Motor):
     LOGGER.info(f"Check {motor.name} limits.")
     lower_limit = yield from bps.rd(motor.low_limit_travel)
     high_limit = yield from bps.rd(motor.high_limit_travel)

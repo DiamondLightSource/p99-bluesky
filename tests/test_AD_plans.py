@@ -5,10 +5,10 @@ from bluesky.run_engine import RunEngine
 from ophyd_async.core import (
     StaticPathProvider,
 )
-from ophyd_async.epics.adcore._core_io import DetectorState
+from ophyd_async.epics.adandor import Andor2Detector
+from ophyd_async.epics.adcore import ADState
 from ophyd_async.testing import assert_emitted, set_mock_value
 
-from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.devices.stages import ThreeAxisStage
 from p99_bluesky.plans.ad_plans import takeImg, tiggerImg
 
@@ -23,7 +23,7 @@ async def test_Andor2_tiggerImg(
 
     RE.subscribe(capture_emitted)
 
-    set_mock_value(andor2.driver.detector_state, DetectorState.IDLE)
+    set_mock_value(andor2.driver.detector_state, ADState.IDLE)
 
     RE(tiggerImg(andor2, 4))
 
@@ -50,7 +50,7 @@ async def test_Andor2_takeImg(
 
     RE.subscribe(capture_emitted)
 
-    set_mock_value(andor2.driver.detector_state, DetectorState.IDLE)
+    set_mock_value(andor2.driver.detector_state, ADState.IDLE)
 
     RE(takeImg(andor2, 1, 4))
     assert (
@@ -79,7 +79,7 @@ async def test_Andor2_scan(
         docs[name].append(doc)
 
     RE.subscribe(capture_emitted)
-    set_mock_value(andor2.driver.detector_state, DetectorState.IDLE)
+    set_mock_value(andor2.driver.detector_state, ADState.IDLE)
     RE(scan([andor2], sim_motor.y, -3, 3, 10))
     assert (
         str(static_path_provider._directory_path)
