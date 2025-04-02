@@ -1,35 +1,90 @@
 import asyncio
 import contextlib
+import time
 
-from bluesky.protocols import Flyable, Preparable
+import numpy as np
+from bluesky.protocols import (
+    Flyable,
+    Preparable,
+    Stoppable,
+)
 from ophyd_async.core import (
     AsyncStatus,
-    Device,
+    StandardReadable,
     WatchableAsyncStatus,
+    WatcherUpdate,
     observe_value,
+    soft_signal_r_and_setter,
     soft_signal_rw,
 )
-from ophyd_async.core._utils import (
-    WatcherUpdate,
-)
+from ophyd_async.core import StandardReadableFormat as Format
 from ophyd_async.epics.motor import FlyMotorInfo, MotorLimitsException
-from ophyd_async.sim._sim_motor import SimMotor
 
 
-class p99SimMotor(SimMotor, Flyable, Preparable):
-    """
-    Adding the missing part to the SimMotor so it behave more like motor
-    """
-
+class SimMotor(
+    StandardReadable,
+    Stoppable,
+    Flyable,
+    Preparable,
+):
     def __init__(self, name="", instant=True) -> None:
+        """
+        old version of the device that behave like a motor.
+        Simulated motor device
+
+        args:
+        - prefix: str: Signal names prefix
+        - name: str: name of device
+        - instant: bool: whether to move instantly, or with a delay
+        """
+        # Define some signals
+        with self.add_children_as_readables(Format.HINTED_SIGNAL):
+            self.user_readback, self._user_readback_set = soft_signal_r_and_setter(
+                float, 0
+            )
+        with self.add_children_as_readables(Format.CONFIG_SIGNAL):
+            self.velocity = soft_signal_rw(float, 0 if instant else 88.88)
+            self.units = soft_signal_rw(str, "mm")
+        self.user_setpoint = soft_signal_rw(float, 0)
         self.max_velocity = soft_signal_rw(float, 100)
         self.acceleration_time = soft_signal_rw(float, 0.0)
         self.precision = soft_signal_rw(int, 3)
         self.deadband = soft_signal_rw(float, 0.05)
         self.motor_done_move = soft_signal_rw(int, 1)
-        self.low_limit_travel = soft_signal_rw(float, -10)
-        self.high_limit_travel = soft_signal_rw(float, 10)
-        super().__init__(name=name, instant=instant)
+        self.low_limit_travel = soft_signal_rw(float, -100)
+        self.high_limit_travel = soft_signal_rw(float, 100)
+        # Whether set() should complete successfully or not
+        self._set_success = True
+        self._move_status: AsyncStatus | None = None
+
+        super().__init__(name=name)
+
+    async def _move(self, old_position: float, new_position: float, move_time: float):
+        start = time.monotonic()
+        # Make an array of relative update times at 10Hz intervals
+        update_times = np.arange(0.1, move_time, 0.1)
+        # With the end position appended
+        update_times = np.concatenate((update_times, [move_time]))
+        # Interpolate the [old, new] position array with those update times
+        new_positions = np.interp(
+            update_times, [0, move_time], [old_position, new_position]
+        )
+        for update_time, new_position in zip(update_times, new_positions, strict=True):
+            # Calculate how long to wait to get there
+            relative_time = time.monotonic() - start
+            await asyncio.sleep(update_time - relative_time)
+            # Update the readback position
+            self._user_readback_set(new_position)
+
+    async def stop(self, success=True):
+        """
+        Stop the motor if it is moving
+        """
+        self._set_success = success
+        if self._move_status:
+            self._move_status.task.cancel()
+            self._move_status = None
+        await self.user_setpoint.set(await self.user_readback.get_value())
 
     @AsyncStatus.wrap
     async def prepare(self, value: FlyMotorInfo):
@@ -142,7 +197,7 @@ class p99SimMotor(SimMotor, Flyable, Preparable):
             raise RuntimeError("Motor was stopped")
 
 
-class SimThreeAxisStage(Device):
+class SimThreeAxisStage(StandardReadable):
     """
     mimic the three axis p99 stage with motor
     """
@@ -150,7 +205,7 @@ class SimThreeAxisStage(Device):
     def __init__(self, name: str, infix: list[str] | None = None, instant=False):
         if infix is None:
             infix = ["X", "Y", "Z"]
-        self.x = p99SimMotor(name + infix[0], instant=instant)
-        self.y = p99SimMotor(name + infix[1], instant=instant)
-        self.z = p99SimMotor(name + infix[2], instant=instant)
+        self.x = SimMotor(name + infix[0], instant=instant)
+        self.y = SimMotor(name + infix[1], instant=instant)
+        self.z = SimMotor(name + infix[2], instant=instant)
         super().__init__(name=name)

@@ -10,7 +10,6 @@ from ophyd_async.epics.motor import Motor
 from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.log import LOGGER
 from p99_bluesky.plans.fast_scan import fast_scan_grid
-from p99_bluesky.sim.sim_stages import p99SimMotor
 from p99_bluesky.utility.utility import step_size_to_step_num
 
 from ..plan_stubs import (
@@ -24,11 +23,11 @@ from ..plan_stubs import (
 def stxm_step(
     det: AreaDetector | SingleTriggerDetector,
     count_time: float,
-    x_step_motor: Motor | p99SimMotor,
+    x_step_motor: Motor,
     x_step_start: float,
     x_step_end: float,
     x_step_size: float,
-    y_step_motor: Motor | p99SimMotor,
+    y_step_motor: Motor,
     y_step_start: float,
     y_step_end: float,
     y_step_size: float,
