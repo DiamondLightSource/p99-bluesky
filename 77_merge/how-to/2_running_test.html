@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Build and Test &#8212; p99_bluesky 0.1.2.dev13+g435cfe1 documentation</title>
+    <title>Build and Test &#8212; p99_bluesky 0.1.1.2.dev17+g728dccd documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=368865e9"></script>
+    <script src="../_static/documentation_options.js?v=b5900507"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -492,6 +492,13 @@
 </div>
 <p>This command will apply fixes to the source code directly. It is recommended to run this command before committing changes.</p>
 </section>
+<section id="running-system-tests">
+<h2>Running System Tests<a class="headerlink" href="#running-system-tests" title="Link to this heading">#</a></h2>
+<p>To run system you are required to have access to <a class="reference external" href="https://p99-blueapi.diamond.ac.uk/docs">Athena services</a>. You will also need p99 RabbitMQ Password which can be found on k8s-p99.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>./system_tests/<span class="w"> </span>--password<span class="w"> </span>&lt;Password&gt;
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -544,6 +551,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-tox">Understanding <code class="docutils literal notranslate"><span class="pre">tox</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-formatting-and-linting">Code Formatting and Linting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-system-tests">Running System Tests</a></li>
 </ul>
   </nav></div>
 
