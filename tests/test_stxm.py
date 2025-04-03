@@ -123,9 +123,10 @@ async def test_stxm_fast_unknown_step(
 
     scan_start = -1
     scan_end = 1
+
     # make the scan motor slow so it can only do 5 steps
     # ideal step-size is 0.2 with speed =2 for 10x10
-    set_mock_value(sim_motor.y.max_velocity, 1)
+    set_mock_value(sim_motor.y.max_velocity, 2)
 
     # Unknown step size
     docs = defaultdict(list)

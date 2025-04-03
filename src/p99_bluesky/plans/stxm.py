@@ -4,10 +4,9 @@ from blueapi.core import MsgGenerator
 from bluesky.preprocessors import (
     finalize_wrapper,
 )
-from ophyd_async.epics.adcore import AreaDetector, SingleTriggerDetector
+from ophyd_async.epics.adcore import AreaDetector
 from ophyd_async.epics.motor import Motor
 
-from p99_bluesky.devices import Andor2Detector
 from p99_bluesky.log import LOGGER
 from p99_bluesky.plans.fast_scan import fast_scan_grid
 from p99_bluesky.utility.utility import step_size_to_step_num
@@ -21,7 +20,7 @@ from ..plan_stubs import (
 
 
 def stxm_step(
-    det: AreaDetector | SingleTriggerDetector,
+    det: AreaDetector,
     count_time: float,
     x_step_motor: Motor,
     x_step_start: float,
@@ -41,7 +40,7 @@ def stxm_step(
 
     Parameters
     ----------
-    det: Andor2Detector | Andor3Ad,
+    det: AreaDetector,
         Area detector.
     count_time: float
         detector count time.
@@ -114,7 +113,7 @@ def stxm_step(
 
 
 def stxm_fast(
-    det: Andor2Detector,
+    det: AreaDetector,
     count_time: float,
     step_motor: Motor,
     step_start: float,
@@ -189,8 +188,9 @@ def stxm_fast(
     scan_range = abs(scan_start - scan_end)
     step_range = abs(step_start - step_end)
     step_motor_speed = yield from bps.rd(step_motor.velocity)
+    deadtime = det._controller.get_deadtime(count_time)
     # get number of data point possible after adjusting plan_time for step movement speed
-    num_data_point = (plan_time - step_range / step_motor_speed) / count_time
+    num_data_point = (plan_time - step_range / step_motor_speed) / (deadtime)
     # Assuming ideal step size is evenly distributed points within the two axis.
     if step_size is not None:
         ideal_step_size = abs(step_size)
