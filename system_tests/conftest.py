@@ -10,6 +10,7 @@ BEAMLINE = "p99"
 @pytest.fixture
 def task_definition() -> dict[str, Task]:
     return {
+        "count": Task(name="count", params={"detectors": ["andor2_point"]}),
         "stxm_step": Task(
             name="stxm_step",
             params={
@@ -23,6 +24,20 @@ def task_definition() -> dict[str, Task]:
                 "y_step_start": -0.1,
                 "y_step_end": 0.1,
                 "y_step_size": 0.05,
+            },
+        ),
+        "stxm_fast": Task(
+            name="stxm_fast",
+            params={
+                "det": "andor2_point",
+                "count_time": 0.1,
+                "step_motor": "sample_stage.x",
+                "step_start": -0.1,
+                "step_end": 0.1,
+                "scan_motor": "sample_stage.y",
+                "scan_start": -0.1,
+                "scan_end": 0.1,
+                "plan_time": 15,
             },
         ),
     }

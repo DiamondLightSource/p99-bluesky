@@ -4,6 +4,8 @@ from blueapi.core import MsgGenerator
 from bluesky.preprocessors import (
     finalize_wrapper,
 )
+from bluesky.protocols import Readable
+from dodal.plan_stubs.data_session import attach_data_session_metadata_decorator
 from ophyd_async.epics.adcore import AreaDetector
 from ophyd_async.epics.motor import Motor
 
@@ -19,8 +21,9 @@ from ..plan_stubs import (
 )
 
 
+@attach_data_session_metadata_decorator()
 def stxm_step(
-    det: AreaDetector,
+    det: AreaDetector | Readable,
     count_time: float,
     x_step_motor: Motor,
     x_step_start: float,
@@ -91,8 +94,9 @@ def stxm_step(
         clean_up_arg["Origin"] = yield from get_motor_positions(
             x_step_motor, y_step_motor
         )
-    # Set count time on detector
-    yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
+    if isinstance(det, AreaDetector):
+        # Set count time on detector
+        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
     # add 1 to step number to include the end point
     yield from finalize_wrapper(
         plan=bp.grid_scan(
@@ -112,8 +116,9 @@ def stxm_step(
     )
 
 
+@attach_data_session_metadata_decorator()
 def stxm_fast(
-    det: AreaDetector,
+    det: AreaDetector | Readable,
     count_time: float,
     step_motor: Motor,
     step_start: float,
@@ -188,7 +193,13 @@ def stxm_fast(
     scan_range = abs(scan_start - scan_end)
     step_range = abs(step_start - step_end)
     step_motor_speed = yield from bps.rd(step_motor.velocity)
-    deadtime = det._controller.get_deadtime(count_time)
+
+    if isinstance(det, AreaDetector):
+        # Set count time on detector
+        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
+        deadtime = det._controller.get_deadtime(count_time)
+    else:
+        deadtime = count_time
     # get number of data point possible after adjusting plan_time for step movement speed
     num_data_point = (plan_time - step_range / step_motor_speed) / (deadtime)
     # Assuming ideal step size is evenly distributed points within the two axis.
@@ -219,7 +230,8 @@ def stxm_fast(
         + f", number of step = {num_of_step}."
     )
     # Set count time on detector
-    yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
+    if isinstance(det, AreaDetector):
+        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
     yield from finalize_wrapper(
         plan=fast_scan_grid(
             [det],
