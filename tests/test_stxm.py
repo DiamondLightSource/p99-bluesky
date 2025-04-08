@@ -200,8 +200,9 @@ async def test_stxm_step_with_home(
     assert -2 == await sim_motor_step.y.user_readback.get_value()
 
 
-async def test_stxm_step_without_home(
-    RE: RunEngine, sim_motor_step: ThreeAxisStage, andor2: Andor2Detector
+async def test_stxm_step_without_home_with_readable(
+    RE: RunEngine,
+    sim_motor_step: ThreeAxisStage,
 ):
     docs = defaultdict(list)
 
@@ -214,7 +215,7 @@ async def test_stxm_step_without_home(
     x_step_end = 2
     RE(
         stxm_step(
-            det=andor2,
+            det=sim_motor_step.z,
             count_time=0.2,
             x_step_motor=sim_motor_step.x,
             x_step_start=0,
@@ -233,8 +234,6 @@ async def test_stxm_step_without_home(
         docs,
         start=1,
         descriptor=1,
-        stream_resource=1,
-        stream_datum=99,
         event=99,
         stop=1,
     )

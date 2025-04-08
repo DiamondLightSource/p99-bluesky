@@ -16,7 +16,6 @@ from dodal.common.visit import (
     LocalDirectoryServiceClient,
     StaticVisitPathProvider,
 )
-from dodal.utils import get_beamline_name
 from ophyd_async.core import (
     FilenameProvider,
     StaticFilenameProvider,
@@ -39,12 +38,9 @@ EXTRA_BLOCKS_RECORD = str(
     Path(__file__).parent / "panda" / "db" / "extra_blocks_panda.db"
 )
 
-BL = get_beamline_name("p99")
-
-
 set_path_provider(
     StaticVisitPathProvider(
-        BL,
+        "p99",
         Path("/dls/p99/data/2024/cm37284-2/processing/writenData"),
         client=LocalDirectoryServiceClient(),  # RemoteDirectoryServiceClient("http://p99-control:8088/api"),
     )
