@@ -45,7 +45,7 @@ def stxm_step(
 
     Parameters
     ----------
-    det: AreaDetector,
+    det: Sequence[AreaDetector | Readable]
         Area detector.
     count_time: float
         detector count time.
@@ -130,6 +130,7 @@ def stxm_fast(
     scan_start: float,
     scan_end: float,
     plan_time: float,
+    time_correction: float = 1,
     step_size: float | None = None,
     home: bool = False,
     snake_axes: bool = True,
@@ -195,8 +196,11 @@ def stxm_fast(
         clean_up_arg["Origin"] = yield from get_motor_positions(scan_motor, step_motor)
 
     scan_range = abs(scan_start - scan_end)
+    scan_acc = yield from bps.rd(scan_motor.acceleration_time)
+    scan_motor_speed = yield from bps.rd(scan_motor.velocity)
     step_range = abs(step_start - step_end)
     step_motor_speed = yield from bps.rd(step_motor.velocity)
+    step_acc = yield from bps.rd(step_motor.acceleration_time)
     main_det = dets[0]
     if isinstance(main_det, AreaDetector):
         # Set count time on detector
@@ -205,27 +209,34 @@ def stxm_fast(
     else:
         deadtime = count_time
     # get number of data point possible after adjusting plan_time for step movement speed
-    num_data_point = (plan_time - step_range / step_motor_speed) / (deadtime)
+    num_data_point_wo_acc = (plan_time - step_range / step_motor_speed) / deadtime
+    point_per_axis = num_data_point_wo_acc**0.5
+    step_mv_time = point_per_axis * step_acc * 2 + step_range / step_motor_speed
+    if snake_axes:
+        scan_mv_time = point_per_axis * scan_acc * 2
+    else:
+        scan_mv_time = point_per_axis * (scan_range / scan_motor_speed + scan_acc * 4)
+
+    num_data_point = (
+        (plan_time - step_mv_time - scan_mv_time) / deadtime
+    ) * time_correction
     # Assuming ideal step size is evenly distributed points within the two axis.
     if step_size is not None:
         ideal_step_size = abs(step_size)
         if step_size == 0:
             raise ValueError("Step_size is 0")
-        else:
-            # ideal_velocity: speed that allow the required step size.
-            ideal_velocity = scan_range / (
-                (num_data_point / abs(step_range / ideal_step_size)) * deadtime
-            )
-
     else:
         ideal_step_size = 1.0 / ((num_data_point / (scan_range * step_range)) ** 0.5)
-        ideal_velocity = ideal_step_size / count_time
 
+    # ideal_velocity: speed that allow the required step size.
+    ideal_velocity = scan_range / (
+        (num_data_point / abs(step_range / ideal_step_size)) * deadtime + scan_acc * 2
+    )
     LOGGER.info(
         f"ideal step size = {ideal_step_size} velocity = {ideal_velocity}"
         + f" number of data point {num_data_point}"
     )
-    # check the idelocity and step size against max velecity and adject in needed.
+    # check the idelocity and step size against max velecity and adject if needed.
     velocity, ideal_step_size = yield from get_velocity_and_step_size(
         scan_motor, ideal_velocity, ideal_step_size
     )

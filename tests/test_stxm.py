@@ -105,7 +105,7 @@ async def test_stxm_fast(
     )
 
 
-async def test_stxm_fast_unknown_step(
+async def test_stxm_fast_unknown_step_snake(
     andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
 ):
     docs = defaultdict(list)
@@ -115,19 +115,78 @@ async def test_stxm_fast_unknown_step(
 
     step_motor_speed = 1
     set_mock_value(sim_motor.x.velocity, step_motor_speed)
-
+    set_mock_value(sim_motor.x.acceleration_time, 0.1)
     step_start = 0
     step_end = 2
-    plan_time = 10 + step_motor_speed * abs(step_start - step_end)
+    plan_time = 6 + step_motor_speed * abs(step_start - step_end)
     count_time = 0.1
 
     scan_start = -1
     scan_end = 1
 
-    # make the scan motor slow so it can only do 5 steps
-    # ideal step-size is 0.2 with speed =2 for 10x10
-    set_mock_value(sim_motor.y.max_velocity, 2)
+    # ideal step-size is about 0.4 with speed of roughly 2 for 5x5
+    # Unknown step size
+    set_mock_value(sim_motor.y.acceleration_time, 0.0)
+    docs = defaultdict(list)
+    RE(
+        stxm_fast(
+            dets=[andor2],
+            count_time=count_time,
+            step_motor=sim_motor.x,
+            step_start=step_start,
+            step_end=step_end,
+            scan_motor=sim_motor.y,
+            scan_start=scan_start,
+            scan_end=scan_end,
+            plan_time=plan_time,
+            home=True,
+        ),
+        capture_emitted,
+    )
 
+    # speed capped at half ideal so expecting 5 events
+    assert_emitted(
+        docs,
+        start=1,
+        descriptor=1,
+        stream_resource=1,
+        stream_datum=5,
+        event=5,
+        stop=1,
+    )
+
+
+async def test_stxm_fast_unknown_step_no_snake(
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
+):
+    docs = defaultdict(list)
+
+    def capture_emitted(name, doc):
+        docs[name].append(doc)
+
+    step_start = 0
+    step_end = 2
+    step_motor_speed = 1
+    step_motor_acc = 0.1
+    scan_start = -1
+    scan_end = 1
+    scan_motor_speed = 2
+    scan_motor_acc = 0.1
+    set_mock_value(sim_motor.x.velocity, step_motor_speed)
+    set_mock_value(sim_motor.x.acceleration_time, step_motor_acc)
+
+    set_mock_value(sim_motor.y.velocity, scan_motor_speed)
+    set_mock_value(sim_motor.y.acceleration_time, scan_motor_acc)
+
+    plan_time = (
+        6
+        + step_motor_speed * abs(step_start - step_end)
+        + 5 * step_motor_acc * 2
+        + (abs(scan_start - scan_end) / (scan_motor_speed) + scan_motor_acc * 2) * 5 * 2
+    )
+    count_time = 0.1
+    print(plan_time)
+    # ideal step-size is 0.4 with speed =2 for 5x5
     # Unknown step size
     docs = defaultdict(list)
     RE(
@@ -142,6 +201,7 @@ async def test_stxm_fast_unknown_step(
             scan_end=scan_end,
             plan_time=plan_time,
             home=True,
+            snake_axes=False,
         ),
         capture_emitted,
     )
