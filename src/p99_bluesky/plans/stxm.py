@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 import bluesky.plan_stubs as bps
 import bluesky.plans as bp
 from blueapi.core import MsgGenerator
@@ -23,7 +25,7 @@ from ..plan_stubs import (
 
 @attach_data_session_metadata_decorator()
 def stxm_step(
-    det: AreaDetector | Readable,
+    dets: Sequence[AreaDetector | Readable],
     count_time: float,
     x_step_motor: Motor,
     x_step_start: float,
@@ -94,13 +96,14 @@ def stxm_step(
         clean_up_arg["Origin"] = yield from get_motor_positions(
             x_step_motor, y_step_motor
         )
-    if isinstance(det, AreaDetector):
+    main_det = dets[0]
+    if isinstance(main_det, AreaDetector):
         # Set count time on detector
-        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
+        yield from set_area_detector_acquire_time(main_det, acquire_time=count_time)
     # add 1 to step number to include the end point
     yield from finalize_wrapper(
         plan=bp.grid_scan(
-            [det],
+            dets,
             x_step_motor,
             x_step_start,
             x_step_end,
@@ -118,7 +121,7 @@ def stxm_step(
 
 @attach_data_session_metadata_decorator()
 def stxm_fast(
-    det: AreaDetector | Readable,
+    dets: list[AreaDetector | Readable],
     count_time: float,
     step_motor: Motor,
     step_start: float,
@@ -143,8 +146,9 @@ def stxm_fast(
 
     Parameters
     ----------
-    det: Andor2Detector | Andor3Ad,
-        Area detector.
+    dets: list [Andor2Detector | Readable,]
+        Area detector or any readable, the first dets is consider the main detector and
+        the count time is set for this detector.
     count_time: float
         detector count time.
     step_motor: Motor,
@@ -193,11 +197,11 @@ def stxm_fast(
     scan_range = abs(scan_start - scan_end)
     step_range = abs(step_start - step_end)
     step_motor_speed = yield from bps.rd(step_motor.velocity)
-
-    if isinstance(det, AreaDetector):
+    main_det = dets[0]
+    if isinstance(main_det, AreaDetector):
         # Set count time on detector
-        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
-        deadtime = det._controller.get_deadtime(count_time)
+        yield from set_area_detector_acquire_time(det=main_det, acquire_time=count_time)
+        deadtime = main_det._controller.get_deadtime(count_time)
     else:
         deadtime = count_time
     # get number of data point possible after adjusting plan_time for step movement speed
@@ -231,11 +235,11 @@ def stxm_fast(
         + f", number of step = {num_of_step}."
     )
     # Set count time on detector
-    if isinstance(det, AreaDetector):
-        yield from set_area_detector_acquire_time(det=det, acquire_time=count_time)
+    if isinstance(main_det, AreaDetector):
+        yield from set_area_detector_acquire_time(det=main_det, acquire_time=count_time)
     yield from finalize_wrapper(
         plan=fast_scan_grid(
-            [det],
+            dets,
             step_motor,
             step_start,
             step_end,

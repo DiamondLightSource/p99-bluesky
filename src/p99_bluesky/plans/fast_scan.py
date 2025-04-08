@@ -6,6 +6,7 @@ from blueapi.core import MsgGenerator
 from bluesky.preprocessors import (
     finalize_wrapper,
 )
+from bluesky.protocols import Readable
 from bluesky.utils import short_uid
 from numpy import linspace
 from ophyd_async.epics.motor import FlyMotorInfo, Motor
@@ -58,7 +59,7 @@ def fast_scan_1d(
 
 
 def fast_scan_grid(
-    dets: list[Any],
+    dets: list[Readable],
     step_motor: Motor,
     step_start: float,
     step_end: float,

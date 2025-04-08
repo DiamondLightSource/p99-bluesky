@@ -47,7 +47,7 @@ async def test_stxm_fast_zero_velocity_fail(
     with pytest.raises(ValueError):
         RE(
             stxm_fast(
-                det=andor2,
+                dets=[andor2],
                 count_time=count_time,
                 step_motor=sim_motor.x,
                 step_start=step_start,
@@ -80,7 +80,7 @@ async def test_stxm_fast(
     num_of_step = step_size_to_step_num(step_start, step_end, step_size)
     RE(
         stxm_fast(
-            det=andor2,
+            dets=[andor2],
             count_time=count_time,
             step_motor=sim_motor.x,
             step_start=step_start,
@@ -132,7 +132,7 @@ async def test_stxm_fast_unknown_step(
     docs = defaultdict(list)
     RE(
         stxm_fast(
-            det=andor2,
+            dets=[andor2],
             count_time=count_time,
             step_motor=sim_motor.x,
             step_start=step_start,
@@ -171,7 +171,7 @@ async def test_stxm_step_with_home(
 
     RE(
         stxm_step(
-            det=andor2,
+            dets=[andor2],
             count_time=0.2,
             x_step_motor=sim_motor_step.x,
             x_step_start=0,
@@ -215,7 +215,7 @@ async def test_stxm_step_without_home_with_readable(
     x_step_end = 2
     RE(
         stxm_step(
-            det=sim_motor_step.z,
+            dets=[sim_motor_step.z],
             count_time=0.2,
             x_step_motor=sim_motor_step.x,
             x_step_start=0,
@@ -257,7 +257,7 @@ async def test_stxm_fast_sim_flyable_motor(
     start_monotonic = time.monotonic()
     RE(
         stxm_fast(
-            det=andor2,
+            dets=[andor2],
             count_time=count_time,
             step_motor=sim_motor_fly.x,
             step_start=step_start,
