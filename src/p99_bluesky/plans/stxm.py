@@ -206,10 +206,11 @@ def stxm_fast(
     if step_size is not None:
         ideal_step_size = abs(step_size)
         if step_size == 0:
-            ideal_velocity = 0  # ideal_velocity: speed that allow the required step size.
+            raise ValueError("Step_size is 0")
         else:
+            # ideal_velocity: speed that allow the required step size.
             ideal_velocity = scan_range / (
-                (num_data_point / abs(step_range / ideal_step_size)) * count_time
+                (num_data_point / abs(step_range / ideal_step_size)) * deadtime
             )
 
     else:

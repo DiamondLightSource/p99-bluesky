@@ -9,6 +9,14 @@ from unittest.mock import Mock
 
 import pytest
 from bluesky.run_engine import RunEngine
+from dodal.common.beamlines.beamline_utils import (
+    set_path_provider,
+)
+from dodal.common.visit import (
+    LocalDirectoryServiceClient,
+    StaticVisitPathProvider,
+)
+from dodal.utils import get_beamline_name
 from ophyd_async.core import (
     FilenameProvider,
     StaticFilenameProvider,
@@ -29,6 +37,17 @@ INCOMPLETE_BLOCK_RECORD = str(
 INCOMPLETE_RECORD = str(Path(__file__).parent / "panda" / "db" / "incomplete_panda.db")
 EXTRA_BLOCKS_RECORD = str(
     Path(__file__).parent / "panda" / "db" / "extra_blocks_panda.db"
+)
+
+BL = get_beamline_name("p99")
+
+
+set_path_provider(
+    StaticVisitPathProvider(
+        BL,
+        Path("/dls/p99/data/2024/cm37284-2/processing/writenData"),
+        client=LocalDirectoryServiceClient(),  # RemoteDirectoryServiceClient("http://p99-control:8088/api"),
+    )
 )
 
 
