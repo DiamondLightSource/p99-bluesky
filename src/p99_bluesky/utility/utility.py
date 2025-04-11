@@ -1,4 +1,4 @@
-from math import ceil
+from math import floor
 
 
 def step_size_to_step_num(start: float, end: float, step_size: float):
@@ -19,4 +19,4 @@ def step_size_to_step_num(start: float, end: float, step_size: float):
 
     """
     step_range = abs(start - end)
-    return ceil(step_range / step_size)
+    return floor(step_range / step_size)

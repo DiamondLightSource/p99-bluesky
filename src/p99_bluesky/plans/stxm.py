@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from math import floor
 
 import bluesky.plan_stubs as bps
 import bluesky.plans as bp
@@ -130,7 +131,7 @@ def stxm_fast(
     scan_start: float,
     scan_end: float,
     plan_time: float,
-    time_correction: float = 1,
+    point_correction: float = 1,
     step_size: float | None = None,
     home: bool = False,
     snake_axes: bool = True,
@@ -166,6 +167,8 @@ def stxm_fast(
         End for scanning axis
     plan_time: float,
         How long it should take in second
+    point_correction: float
+        Scaling factor to allow adjustment of how many total points.
     step_size: float | None = None,
         Optional step size for the slow axis
     home: bool = False,
@@ -208,35 +211,53 @@ def stxm_fast(
         deadtime = main_det._controller.get_deadtime(count_time)
     else:
         deadtime = count_time
-    # get number of data point possible after adjusting plan_time for step movement speed
-    num_data_point_wo_acc = (plan_time - step_range / step_motor_speed) / deadtime
-    point_per_axis = num_data_point_wo_acc**0.5
-    step_mv_time = point_per_axis * step_acc * 2 + step_range / step_motor_speed
-    if snake_axes:
-        scan_mv_time = point_per_axis * scan_acc * 2
-    else:
-        scan_mv_time = point_per_axis * (scan_range / scan_motor_speed + scan_acc * 4)
 
+    # get number of data point possible after adjusting plan_time for step movement speed
+    num_data_point_wo_acc = ((plan_time / deadtime) / (scan_range * step_range)) ** 0.5
+    point_step_axis = floor(num_data_point_wo_acc * step_range)
+
+    if point_step_axis < 1:
+        point_step_axis = 1
+    point_scan_axis = floor(num_data_point_wo_acc * (scan_range))
+    print(f"ssa{point_step_axis}, fsa{point_scan_axis}, p{num_data_point_wo_acc:f}")
+    step_mv_time = point_step_axis * step_acc * 2 + step_range / step_motor_speed
+
+    if snake_axes:
+        scan_mv_time = point_step_axis * (scan_acc * 2)
+    else:
+        scan_mv_time = point_scan_axis * (scan_acc * 2) + (point_scan_axis - 1) * (
+            scan_range / scan_motor_speed + scan_acc * 2
+        )  # Non-snake requires extra movement time
+    """Rough adjustment of the num of data point possible including an over
+    estimation of point per axis."""
     num_data_point = (
-        (plan_time - step_mv_time - scan_mv_time) / deadtime
-    ) * time_correction
+        ((plan_time - step_mv_time - scan_mv_time) / deadtime) / (scan_range * step_range)
+    ) ** 0.5 * point_correction
+    point_step_axis = floor(num_data_point * step_range)
+    point_scan_axis = floor(num_data_point * (scan_range))
+    print(point_scan_axis, point_step_axis)
     # Assuming ideal step size is evenly distributed points within the two axis.
     if step_size is not None:
-        ideal_step_size = abs(step_size)
         if step_size == 0:
             raise ValueError("Step_size is 0")
+        ideal_step_size = abs(step_size)
     else:
-        ideal_step_size = 1.0 / ((num_data_point / (scan_range * step_range)) ** 0.5)
+        """The point correction factor is for correcting over
+        estimation/extra motion time etc, defaulted to 1"""
+        ideal_step_size = step_range / point_step_axis
 
     # ideal_velocity: speed that allow the required step size.
-    ideal_velocity = scan_range / (
-        (num_data_point / abs(step_range / ideal_step_size)) * deadtime + scan_acc * 2
-    )
+    if point_scan_axis <= 2:
+        ideal_velocity = yield from bps.rd(scan_motor.max_velocity)
+    else:
+        ideal_velocity = scan_range / (
+            scan_range / ideal_step_size * deadtime + scan_acc * 2
+        )
+
     LOGGER.info(
         f"ideal step size = {ideal_step_size} velocity = {ideal_velocity}"
         + f" number of data point {num_data_point}"
     )
-    # check the idelocity and step size against max velecity and adject if needed.
     velocity, ideal_step_size = yield from get_velocity_and_step_size(
         scan_motor, ideal_velocity, ideal_step_size
     )
