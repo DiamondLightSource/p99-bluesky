@@ -294,13 +294,13 @@ def estimate_axis_points(
     if point_step_axis < 1:
         point_step_axis = 1
         LOGGER.warning("Only one point for the ste axis!!")
-    point_scan_axis = floor(num_points_per_axis * (scan_range))
 
     step_mv_time = point_step_axis * step_acceleration * 2 + step_range / step_speed
 
     if snake_axes:
         scan_mv_time = point_step_axis * (scan_acceleration * 2)
     else:
+        point_scan_axis = floor(num_points_per_axis * (scan_range))
         scan_mv_time = point_scan_axis * (scan_acceleration * 2) + (
             point_scan_axis - 1
         ) * (scan_range / scan_speed + scan_acceleration * 2)
@@ -308,8 +308,11 @@ def estimate_axis_points(
     """
     Rough adjustment of the num of data point possible, This is an under estimation.
     """
+    corrected_num_points = (plan_time - step_mv_time - scan_mv_time) / deadtime
+    if corrected_num_points <= 0:
+        raise (ValueError("Plan time too short for the area and count time required."))
     point_per_axis = (
-        ((plan_time - step_mv_time - scan_mv_time) / deadtime) / (scan_range * step_range)
+        (corrected_num_points) / (scan_range * step_range)
     ) ** 0.5 * correction
     point_per_step_axis = floor(point_per_axis * step_range)
     point_per_scan_axis = floor(point_per_axis * (scan_range))
@@ -320,6 +323,8 @@ def estimate_axis_points(
             raise ValueError("Step_size is 0")
         ideal_step_size = abs(step_size)
     else:
+        if point_per_step_axis < 1:
+            point_per_step_axis = 1
         ideal_step_size = step_range / point_per_step_axis
 
     # ideal_velocity: speed that allow the required step size.

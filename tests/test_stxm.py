@@ -107,7 +107,7 @@ async def test_stxm_fast(
     )
 
 
-async def test_stxm_fast_with_step_size_too_big(
+async def test_stxm_fast_with_too_little_time_stxm_become_1d(
     andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
 ):
     docs = defaultdict(list)
@@ -115,9 +115,8 @@ async def test_stxm_fast_with_step_size_too_big(
     def capture_emitted(name, doc):
         docs[name].append(doc)
 
-    plan_time = 50
+    plan_time = 1.5
     count_time = 0.1
-    step_size = 0.1
     step_start = 2.9
     step_end = 3
 
@@ -129,10 +128,9 @@ async def test_stxm_fast_with_step_size_too_big(
             step_start=step_start,
             step_end=step_end,
             scan_motor=sim_motor.y,
-            scan_start=1,
-            scan_end=2,
+            scan_start=-5,
+            scan_end=5,
             plan_time=plan_time,
-            step_size=step_size,
             home=True,
         ),
         capture_emitted,
@@ -146,6 +144,42 @@ async def test_stxm_fast_with_step_size_too_big(
         event=1,
         stop=1,
     )
+
+
+async def test_stxm_fast_with_too_little_time_stxm_cannot_have_any_points(
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
+):
+    docs = defaultdict(list)
+
+    def capture_emitted(name, doc):
+        docs[name].append(doc)
+
+    plan_time = 10
+    count_time = 0.1
+    step_start = 2.0
+    step_end = 4
+    set_mock_value(sim_motor.x.velocity, 10)
+    set_mock_value(sim_motor.x.acceleration_time, 0)
+    set_mock_value(sim_motor.y.velocity, 10)
+    set_mock_value(sim_motor.y.acceleration_time, 0)
+    with pytest.raises(ValueError) as e:
+        RE(
+            stxm_fast(
+                dets=[sim_motor.z, andor2],
+                count_time=count_time,
+                step_motor=sim_motor.x,
+                step_start=step_start,
+                step_end=step_end,
+                scan_motor=sim_motor.y,
+                scan_start=-5,
+                scan_end=5,
+                plan_time=plan_time,
+                snake_axes=False,
+                home=True,
+            ),
+            capture_emitted,
+        )
+    assert str(e.value) == "Plan time too short for the area and count time required."
 
 
 async def test_stxm_fast_with_speed_capped(
@@ -212,15 +246,19 @@ async def test_stxm_fast_unknown_step_snake(
     scan_end = 3
     count_time = rng.uniform(low=0.1, high=1)
     det_dead_time = 0.1
-    deadtime = count_time + det_dead_time
+    deadtime = count_time + det_dead_time + step_acc
     step_range = abs(step_start - step_end)
     scan_range = abs(scan_start - scan_end)
     set_mock_value(sim_motor.x.velocity, step_motor_speed)
     set_mock_value(sim_motor.x.acceleration_time, step_acc)
     set_mock_value(sim_motor.y.velocity, scan_motor_speed)
     set_mock_value(sim_motor.y.acceleration_time, scan_acc)
+    set_mock_value(sim_motor.x.high_limit_travel, 88)
+    set_mock_value(sim_motor.x.low_limit_travel, -88)
 
-    plan_time = number_of_point**2 * (deadtime)
+    set_mock_value(sim_motor.y.high_limit_travel, 88)
+    set_mock_value(sim_motor.y.low_limit_travel, -88)
+    plan_time = number_of_point**2 * (deadtime) + step_range / step_motor_speed
     RE(
         stxm_fast(
             dets=[andor2],
@@ -238,8 +276,6 @@ async def test_stxm_fast_unknown_step_snake(
     )
 
     # +- one data point due to rounding
-
-    # assert docs["event"].__len__() == pytest.approx(floor(point_per_axis), abs=1)
     t = (number_of_point**2 / (step_range + scan_range)) ** 0.5 * step_range
     assert docs["event"].__len__() == pytest.approx(floor(t), rel=1)
 
