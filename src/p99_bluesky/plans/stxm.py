@@ -198,10 +198,9 @@ def stxm_fast(
     if home:
         clean_up_arg["Origin"] = yield from get_motor_positions(scan_motor, step_motor)
 
-    scan_range = abs(scan_start - scan_end)
     scan_acc = yield from bps.rd(scan_motor.acceleration_time)
     scan_motor_speed = yield from bps.rd(scan_motor.velocity)
-    step_range = abs(step_start - step_end)
+    scan_motor_max_vel = yield from bps.rd(scan_motor.max_velocity)
     step_motor_speed = yield from bps.rd(step_motor.velocity)
     step_acc = yield from bps.rd(step_motor.acceleration_time)
     main_det = dets[0]
@@ -212,54 +211,27 @@ def stxm_fast(
     else:
         deadtime = count_time
 
-    # get number of data point possible after adjusting plan_time for step movement speed
-    num_data_point_wo_acc = ((plan_time / deadtime) / (scan_range * step_range)) ** 0.5
-    point_step_axis = floor(num_data_point_wo_acc * step_range)
-
-    if point_step_axis < 1:
-        point_step_axis = 1
-    point_scan_axis = floor(num_data_point_wo_acc * (scan_range))
-    print(f"ssa{point_step_axis}, fsa{point_scan_axis}, p{num_data_point_wo_acc:f}")
-    step_mv_time = point_step_axis * step_acc * 2 + step_range / step_motor_speed
-
-    if snake_axes:
-        scan_mv_time = point_step_axis * (scan_acc * 2)
-    else:
-        scan_mv_time = point_scan_axis * (scan_acc * 2) + (point_scan_axis - 1) * (
-            scan_range / scan_motor_speed + scan_acc * 2
-        )  # Non-snake requires extra movement time
-    """Rough adjustment of the num of data point possible including an over
-    estimation of point per axis."""
-    num_data_point = (
-        ((plan_time - step_mv_time - scan_mv_time) / deadtime) / (scan_range * step_range)
-    ) ** 0.5 * point_correction
-    point_step_axis = floor(num_data_point * step_range)
-    point_scan_axis = floor(num_data_point * (scan_range))
-    print(point_scan_axis, point_step_axis)
-    # Assuming ideal step size is evenly distributed points within the two axis.
-    if step_size is not None:
-        if step_size == 0:
-            raise ValueError("Step_size is 0")
-        ideal_step_size = abs(step_size)
-    else:
-        """The point correction factor is for correcting over
-        estimation/extra motion time etc, defaulted to 1"""
-        ideal_step_size = step_range / point_step_axis
-
-    # ideal_velocity: speed that allow the required step size.
-    if point_scan_axis <= 2:
-        ideal_velocity = yield from bps.rd(scan_motor.max_velocity)
-    else:
-        ideal_velocity = scan_range / (
-            scan_range / ideal_step_size * deadtime + scan_acc * 2
-        )
-
-    LOGGER.info(
-        f"ideal step size = {ideal_step_size} velocity = {ideal_velocity}"
-        + f" number of data point {num_data_point}"
+    ideal_velocity, ideal_step_size = estimate_axis_points(
+        plan_time=plan_time,
+        deadtime=deadtime,
+        step_start=step_start,
+        step_end=step_end,
+        step_size=step_size,
+        step_speed=step_motor_speed,
+        step_acceleration=step_acc,
+        scan_start=scan_start,
+        scan_end=scan_end,
+        scan_speed=scan_motor_speed,
+        scan_acceleration=scan_acc,
+        scan_max_vel=scan_motor_max_vel,
+        correction=point_correction,
+        snake_axes=snake_axes,
     )
+
     velocity, ideal_step_size = yield from get_velocity_and_step_size(
-        scan_motor, ideal_velocity, ideal_step_size
+        scan_motor,
+        ideal_velocity,
+        ideal_step_size,
     )
     num_of_step = step_size_to_step_num(step_start, step_end, ideal_step_size)
     LOGGER.info(
@@ -292,3 +264,73 @@ def clean_up(**kwargs: dict):
     if kwargs["Home"]:
         # move motor back to stored position
         yield from bps.mov(*kwargs["Origin"])
+
+
+def estimate_axis_points(
+    plan_time: float,
+    deadtime: float,
+    step_start: float,
+    step_end: float,
+    step_size: float | None,
+    step_acceleration: float,
+    step_speed: float,
+    scan_start: float,
+    scan_end: float,
+    scan_acceleration: float,
+    scan_speed: float,
+    scan_max_vel: float,
+    snake_axes: bool,
+    correction: float,
+) -> tuple[float, float]:
+    """
+    Estimate the number of points can be done for a given time and two motion axes.
+    """
+    step_range = abs(step_start - step_end)
+    scan_range = abs(scan_start - scan_end)
+    # Best case, assuming infinite speed and acceleration.
+    num_points_per_axis = ((plan_time / deadtime) / (scan_range * step_range)) ** 0.5
+    point_step_axis = floor(num_points_per_axis * step_range)
+
+    if point_step_axis < 1:
+        point_step_axis = 1
+        LOGGER.warning("Only one point for the ste axis!!")
+    point_scan_axis = floor(num_points_per_axis * (scan_range))
+
+    step_mv_time = point_step_axis * step_acceleration * 2 + step_range / step_speed
+
+    if snake_axes:
+        scan_mv_time = point_step_axis * (scan_acceleration * 2)
+    else:
+        scan_mv_time = point_scan_axis * (scan_acceleration * 2) + (
+            point_scan_axis - 1
+        ) * (scan_range / scan_speed + scan_acceleration * 2)
+        # Non-snake requires extra movement time
+    """
+    Rough adjustment of the num of data point possible, This is an under estimation.
+    """
+    point_per_axis = (
+        ((plan_time - step_mv_time - scan_mv_time) / deadtime) / (scan_range * step_range)
+    ) ** 0.5 * correction
+    point_per_step_axis = floor(point_per_axis * step_range)
+    point_per_scan_axis = floor(point_per_axis * (scan_range))
+
+    # Assuming ideal step size is evenly distributed points within the two axis.
+    if step_size is not None:
+        if step_size == 0:
+            raise ValueError("Step_size is 0")
+        ideal_step_size = abs(step_size)
+    else:
+        ideal_step_size = step_range / point_per_step_axis
+
+    # ideal_velocity: speed that allow the required step size.
+    if point_per_scan_axis <= 2:
+        ideal_velocity = scan_max_vel
+    else:
+        ideal_velocity = scan_range / (
+            (scan_range / ideal_step_size) * deadtime + scan_acceleration * 2
+        )
+    LOGGER.info(
+        f"ideal step size = {ideal_step_size} velocity = {ideal_velocity}"
+        + f" number of data point for step axis {point_per_step_axis}"
+    )
+    return ideal_velocity, ideal_step_size

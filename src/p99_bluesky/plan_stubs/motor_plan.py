@@ -50,6 +50,6 @@ def get_velocity_and_step_size(
     # if motor does not move fast enough increase step_motor step size
     if ideal_velocity > max_velocity:
         ideal_step_size = ideal_step_size / (ideal_velocity / max_velocity)
-        ideal_velocity = max_velocity - 0.01
+        ideal_velocity = round(max_velocity, 3)
 
     return ideal_velocity, ideal_step_size

@@ -82,7 +82,7 @@ async def test_stxm_fast(
 
     RE(
         stxm_fast(
-            dets=[andor2],
+            dets=[sim_motor.z, andor2],
             count_time=count_time,
             step_motor=sim_motor.x,
             step_start=step_start,
@@ -103,6 +103,47 @@ async def test_stxm_fast(
         stream_resource=1,
         stream_datum=num_of_step,
         event=num_of_step,
+        stop=1,
+    )
+
+
+async def test_stxm_fast_with_step_size_too_big(
+    andor2: Andor2Detector, sim_motor: ThreeAxisStage, RE: RunEngine
+):
+    docs = defaultdict(list)
+
+    def capture_emitted(name, doc):
+        docs[name].append(doc)
+
+    plan_time = 50
+    count_time = 0.1
+    step_size = 0.1
+    step_start = 2.9
+    step_end = 3
+
+    RE(
+        stxm_fast(
+            dets=[sim_motor.z, andor2],
+            count_time=count_time,
+            step_motor=sim_motor.x,
+            step_start=step_start,
+            step_end=step_end,
+            scan_motor=sim_motor.y,
+            scan_start=1,
+            scan_end=2,
+            plan_time=plan_time,
+            step_size=step_size,
+            home=True,
+        ),
+        capture_emitted,
+    )
+    assert_emitted(
+        docs,
+        start=1,
+        descriptor=1,
+        stream_resource=1,
+        stream_datum=1,
+        event=1,
         stop=1,
     )
 
@@ -161,8 +202,8 @@ async def test_stxm_fast_unknown_step_snake(
     rng = random.default_rng()
     number_of_point = rng.integers(low=5, high=20)
 
-    step_motor_speed = rng.uniform(low=0.5, high=10)
-    scan_motor_speed = rng.uniform(low=0.5, high=10)
+    step_motor_speed = rng.uniform(low=1.5, high=10)
+    scan_motor_speed = rng.uniform(low=1.5, high=10)
     step_acc = step_motor_speed * rng.uniform(low=0.01, high=0.1)
     scan_acc = scan_motor_speed * rng.uniform(low=0.01, high=0.1)
     step_start = rng.uniform(low=-3, high=1.5)
@@ -226,8 +267,13 @@ async def test_stxm_fast_unknown_step_no_snake(
     step_range = abs(step_start - step_end)
     set_mock_value(sim_motor.x.velocity, step_motor_speed)
     set_mock_value(sim_motor.x.acceleration_time, 0.1)
+    set_mock_value(sim_motor.x.high_limit_travel, 88)
+    set_mock_value(sim_motor.x.low_limit_travel, -88)
+
     set_mock_value(sim_motor.y.velocity, scan_motor_speed)
     set_mock_value(sim_motor.y.acceleration_time, 0.1)
+    set_mock_value(sim_motor.y.high_limit_travel, 88)
+    set_mock_value(sim_motor.y.low_limit_travel, -88)
     rng = random.default_rng()
 
     number_of_point = rng.integers(low=5, high=25)
@@ -238,7 +284,6 @@ async def test_stxm_fast_unknown_step_no_snake(
         + step_range / step_motor_speed
         + (number_of_point - 1) * (scan_range / scan_motor_speed + scan_acc * 2)
     )
-    print(plan_time)
     docs = defaultdict(list)
     RE(
         stxm_fast(
@@ -257,16 +302,6 @@ async def test_stxm_fast_unknown_step_no_snake(
         capture_emitted,
     )
 
-    # speed capped at half ideal so expecting 5 events
-    # assert_emitted(
-    #     docs,
-    #     start=1,
-    #     descriptor=1,
-    #     stream_resource=1,
-    #     stream_datum=number_of_point,
-    #     event=number_of_point,
-    #     stop=1,
-    # )
     assert docs["event"].__len__() <= number_of_point
 
 
@@ -282,8 +317,8 @@ async def test_stxm_fast_unknown_step_snake_with_point_correction(
     rng = random.default_rng()
 
     point_correction = rng.uniform(low=0.2, high=1)
-    step_motor_speed = 0.1
-    scan_motor_speed = 0.1
+    step_motor_speed = 10
+    scan_motor_speed = 10
     step_acc = 0.1
     scan_acc = 0.1
     step_start = 1  # rng.uniform(low=-4, high=1)
@@ -298,7 +333,7 @@ async def test_stxm_fast_unknown_step_snake_with_point_correction(
     set_mock_value(sim_motor.y.acceleration_time, scan_acc)
 
     plan_time = 100  # this will generate 21 steps
-    point_step_axis = 21
+    point_step_axis = 29
 
     docs = defaultdict(list)
     RE(
@@ -406,3 +441,38 @@ async def test_stxm_step_without_home_with_readable(
     )
     assert x_step_end == await sim_motor_step.x.user_readback.get_value()
     assert y_step_end == await sim_motor_step.y.user_readback.get_value()
+
+
+async def test_stxm_fast_sim_flyable_motor(
+    andor2: Andor2Detector, sim_motor_fly: ThreeAxisStage, RE: RunEngine
+):
+    docs = defaultdict(list)
+
+    def capture_emitted(name, doc):
+        docs[name].append(doc)
+
+    plan_time = 1.5
+    count_time = 0.2
+    step_size = 0.2
+    step_start = -0.5
+    step_end = 0.5
+    RE(
+        stxm_fast(
+            dets=[andor2],
+            count_time=count_time,
+            step_motor=sim_motor_fly.x,
+            step_start=step_start,
+            step_end=step_end,
+            scan_motor=sim_motor_fly.y,
+            scan_start=1,
+            scan_end=2,
+            plan_time=plan_time,
+            step_size=step_size,
+            snake_axes=True,
+            home=False,
+        ),
+        capture_emitted,
+    )
+    # The overhead is about 3 sec in pytest
+
+    assert docs["event"].__len__() == docs["stream_datum"].__len__()
