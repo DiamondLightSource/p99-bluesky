@@ -14,7 +14,7 @@ def task_definition() -> dict[str, Task]:
         "stxm_step": Task(
             name="stxm_step",
             params={
-                "det": "andor2_point",
+                "dets": ["andor2_point"],
                 "count_time": 0.1,
                 "x_step_motor": "sample_stage.x",
                 "x_step_start": -0.1,
@@ -29,7 +29,7 @@ def task_definition() -> dict[str, Task]:
         "stxm_fast": Task(
             name="stxm_fast",
             params={
-                "det": "andor2_point",
+                "dets": "andor2_point",
                 "count_time": 0.1,
                 "step_motor": "sample_stage.x",
                 "step_start": -0.1,

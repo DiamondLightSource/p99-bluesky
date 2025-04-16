@@ -258,7 +258,9 @@ async def test_stxm_fast_unknown_step_snake(
 
     set_mock_value(sim_motor.y.high_limit_travel, 88)
     set_mock_value(sim_motor.y.low_limit_travel, -88)
-    plan_time = number_of_point**2 * (deadtime) + step_range / step_motor_speed
+    plan_time = (
+        number_of_point**2 * (deadtime) + step_range / step_motor_speed + +10
+    )  # extra overhead poor plan time guess
     RE(
         stxm_fast(
             dets=[andor2],
@@ -319,6 +321,7 @@ async def test_stxm_fast_unknown_step_no_snake(
         + number_of_point * (step_acc * 2 + scan_acc * 2)
         + step_range / step_motor_speed
         + (number_of_point - 1) * (scan_range / scan_motor_speed + scan_acc * 2)
+        + 10  # extra overhead poor plan time guess
     )
     docs = defaultdict(list)
     RE(
@@ -338,7 +341,7 @@ async def test_stxm_fast_unknown_step_no_snake(
         capture_emitted,
     )
 
-    assert docs["event"].__len__() <= number_of_point
+    assert docs["event"].__len__() == pytest.approx(number_of_point, abs=1)
 
 
 @pytest.mark.parametrize("execution_number", range(5))
@@ -368,8 +371,8 @@ async def test_stxm_fast_unknown_step_snake_with_point_correction(
     set_mock_value(sim_motor.y.velocity, scan_motor_speed)
     set_mock_value(sim_motor.y.acceleration_time, scan_acc)
 
-    plan_time = 100  # this will generate 21 steps
-    point_step_axis = 29
+    plan_time = 100  # this will generate 28 steps without correction
+    point_step_axis = 28
 
     docs = defaultdict(list)
     RE(
@@ -390,7 +393,6 @@ async def test_stxm_fast_unknown_step_snake_with_point_correction(
     )
 
     # +- one data point due to rounding
-
     assert docs["event"].__len__() == pytest.approx(
         floor(point_step_axis * point_correction), abs=1
     )
