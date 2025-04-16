@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Before installing, ensure you have Python 3.8 or later. You can check your Python version by running the following command in your terminal:
+Before installing, ensure you have Python 3.10 or later. You can check your Python version by running the following command in your terminal:
 
 ```bash
 python3 --version
