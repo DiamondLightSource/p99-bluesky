@@ -4,7 +4,10 @@ from ophyd_async.core import init_devices
 from ophyd_async.epics.motor import Motor
 from ophyd_async.testing import set_mock_value
 
-from p99_bluesky.plan_stubs.motor_plan import check_within_limit
+from p99_bluesky.plan_stubs.motor_plan import (
+    check_within_limit,
+    get_velocity_and_step_size,
+)
 
 
 @pytest.fixture
@@ -25,3 +28,14 @@ def test_check_within_limit(mock_motor: Motor, RE: RunEngine):
         RE(check_within_limit([21], mock_motor))
 
     RE(check_within_limit([18], mock_motor))
+
+
+def test_get_velocity_and_step_size_speed_too_low_failed(
+    mock_motor: Motor, RE: RunEngine
+):
+    with pytest.raises(ValueError):
+        RE(
+            get_velocity_and_step_size(
+                scan_motor=mock_motor, ideal_velocity=-1, ideal_step_size=0.1
+            )
+        )

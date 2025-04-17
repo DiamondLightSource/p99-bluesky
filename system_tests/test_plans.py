@@ -55,13 +55,21 @@ def _check_all_events(all_events: list[AnyEvent]):
 
 
 @pytest.mark.parametrize(
-    "device", ["sample_stage", "andor2_point", "andor2_det", "filter"]
+    "device",
+    [
+        "sample_stage",
+        "andor2_point",
+        "andor2_det",
+        "filter",
+        "lab_stage",
+        "angle_stage",
+    ],
 )
 def test_device_present(client: BlueapiClient, device: str):
     assert client.get_device(device), f"{device} is not available"
 
 
-@pytest.mark.parametrize("plan", ["stxm_step"])
+@pytest.mark.parametrize("plan", ["count", "stxm_step"])
 def test_spec_scan_task(
     client: BlueapiClient, task_definition: dict[str, Task], plan: str
 ):
